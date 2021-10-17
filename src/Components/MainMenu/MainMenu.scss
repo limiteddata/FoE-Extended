@@ -1,0 +1,75 @@
+@import '../../styles/properties';
+.container {
+  @include bringtofront;
+  width: 56px;
+  min-height: 97px;
+  max-height: 420px;
+  height: 320px;
+  right: 0px;
+  bottom: 80px;
+
+  background-image: url('https://foero.innogamescdn.com/assets/shared/gui/buffbar/buffbar_bg_wood.png');
+  background-repeat: repeat;
+  border-radius: 15px 0px 0px 15px;
+
+  border-image-slice: 23 0 23 3;
+  border-image-width: 23px 0px 23px 3px;
+  border-image-outset: 2px 0px 2px 2px;
+  border-image-repeat: round round;
+  border-image-source: url('https://foero.innogamescdn.com/assets/shared/gui/buffbar/buffbar_bg_panel_9slice.png');
+  border-style: solid;
+
+  border-right: 0px;
+}
+.content {
+  width: 100%;
+  height: calc(100% - 40px);
+  position: absolute;
+  top: 21px;
+  overflow: hidden;
+}
+.slider {
+  position: relative;
+  top: 0px;
+  transition: top 0.4s ease-in-out;
+  height: 98%;
+}
+.item {
+  width: 56px;
+  height: 56px;
+  background-image: url('https://foero.innogamescdn.com/assets/shared/gui/buffbar/buffbar_slot_bg_orange.png');
+  background-size: cover;
+  box-sizing: border-box;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.item > img {
+  width: 100%;
+  height: auto;
+}
+.navbutton {
+  height: 14px;
+  width: 56px;
+  background-size: cover;
+  border-radius: 5px 0px 0px 0px;
+  background-image: url('https://foero.innogamescdn.com/assets/shared/gui/buffbar/buffbar_button_scroll_disabled.png');
+  cursor: pointer;
+  position: absolute;
+}
+.active {
+  background-image: url('https://foero.innogamescdn.com/assets/shared/gui/buffbar/buffbar_button_scroll_down.png');
+}
+.active:hover {
+  background-image: url('https://foero.innogamescdn.com/assets/shared/gui/buffbar/buffbar_button_scroll_over.png');
+}
+.upbutton {
+  top: 0px;
+}
+
+.downbutton {
+  bottom: 0px;
+  transform: rotateX(180deg);
+}

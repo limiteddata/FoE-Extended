@@ -1,0 +1,30 @@
+@import '../../styles/colors';
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 5px;
+  height: 13px;
+  border-spacing: 0;
+  border-collapse: separate;
+  background-color: rgba(255, 158, 69, 0.07);
+}
+
+td img {
+  height: 30px;
+}
+
+.table-header {
+  background-color: $black-75;
+  height: 40px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: $black-50;
+}

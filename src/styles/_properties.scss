@@ -1,0 +1,22 @@
+@mixin bringtofront {
+  position: absolute;
+  z-index: 1000;
+  user-select: none;
+}
+@mixin flex {
+  display: flex;
+}
+
+@mixin flexWcenter {
+  @include flex;
+  justify-content: center;
+}
+@mixin flexHcenter {
+  @include flex;
+  align-items: center;
+}
+@mixin flexAllcenter {
+  @include flex;
+  align-items: center;
+  justify-content: center;
+}

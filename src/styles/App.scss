@@ -1,0 +1,25 @@
+@import 'colors';
+@import '_components';
+@import '_properties';
+
+* {
+  font-family: 'Segoe UI';
+  text-shadow: 0 1px 1px $black-65;
+  color: $TextColor-Normal;
+  font-size: 0.9rem;
+  font-weight: 400;
+  text-align: left;
+  padding: 0;
+  margin: 0;
+  box-sizing: content-box;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #281207;
+  border-radius: 10px;
+}
