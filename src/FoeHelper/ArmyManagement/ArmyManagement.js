@@ -35,15 +35,13 @@ class ArmyManagement extends EventEmitter{
         super();
         new Promise(async (resolve, rejects) =>{
             const loadedAttackArmy = localStorage.getItem('attackArmy');
-            if(loadedAttackArmy != 'null' )
+            if(loadedAttackArmy && loadedAttackArmy != 'null')
                 this.attackArmy = JSON.parse(loadedAttackArmy);
-
             const loadedGvGArmy = localStorage.getItem('gvgArmy');
-            if(loadedGvGArmy !== 'null' )
+            if(loadedGvGArmy && loadedGvGArmy != 'null')
                 this.gvgArmy = JSON.parse(loadedGvGArmy);
 
             this.armyTypes = await this.getArmyType();
-            //[window.gameVars.world_id]
             FoEProxy.addHandler('getArmyInfo', response => {
                 if (response.units === null) return;
                 // sort each unit into groups of same type
@@ -102,23 +100,25 @@ class ArmyManagement extends EventEmitter{
         });
     }
 
-    setNewArmy = async (fetch=false) => {
-        /*
-        const defendingIDs = this.Army.defendingArmy.map(unit => unit.unitId);
-        const arena_defendingIDs = this.Army.arenaDefending.map(unit => unit.unitId);
+    setNewArmy = async (setArmy) => {
+        const attackarm = setArmy?setArmy:this.attackArmy;
+        const defendingIDs = this.ArmyPool.defendingArmy.map(unit => unit.unitId);
+        const arena_defendingIDs = this.ArmyPool.arenaDefending.map(unit => unit.unitId);
         let attackIDs = [];
-        this.Army.attackArmy.forEach(unit => {
-            for (let i = 0; i < this.Army.armyPool.length; i++) {
-                if (this.Army.armyPool[i]["unitTypeId"] === unit.unitTypeId &&
-                    this.Army.armyPool[i]["currentHitpoints"] === 10 && !attackIDs.includes(this.Army.armyPool[i]["unitId"])) {
-                    attackIDs.push(this.Army.armyPool[i]["unitId"]);
+
+        attackarm.forEach(unit => {
+            for (let i = 0; i < this.ArmyPool.unassignedArmy.length; i++) {
+                if (this.ArmyPool.unassignedArmy[i]["unitTypeId"] === unit.unitTypeId &&
+                    this.ArmyPool.unassignedArmy[i]["currentHitpoints"] === 10 && !attackIDs.includes(this.ArmyPool.unassignedArmy[i]["unitId"])) {
+                    attackIDs.push(this.ArmyPool.unassignedArmy[i]["unitId"]);
                     break;
                 }
             }
         });
+
         const request = [{ "__class__": "ServerRequest", "requestData": [[{ "__class__": "ArmyPool", "units": [...attackIDs], "type": "attacking" }, { "__class__": "ArmyPool", "units": [...defendingIDs], "type": "defending" }, { "__class__": "ArmyPool", "units": [...arena_defendingIDs], "type": "arena_defending" }], { "__class__": "ArmyContext", "content": "main" }], "requestClass": "ArmyUnitManagementService", "requestMethod": "updatePools" }];
         await FoERequest.XHRRequestAsync(request, 0);
-        console.log('New army set');*/
+        console.log('New army set');
     }
 }
 

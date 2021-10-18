@@ -4,7 +4,7 @@ import './Modal.scss'
 import ModalHeader from './ModalHeader';
 import ResizerWindow from './ResizerWindow';
 
-export default function ModalWindow({title, settings, center, initialWidth, initialHeight, initialX, initialY, minWidth, minHeight, openWindow,closeWindow,children}) {
+export default function ModalWindow({title, styles, settings, center, initialWidth, initialHeight, initialX, initialY, minWidth, minHeight, openWindow,closeWindow,children}) {
     const panelRef = useRef(null);
 
     const elements = document.getElementsByClassName('focus');
@@ -30,7 +30,7 @@ export default function ModalWindow({title, settings, center, initialWidth, init
                     minHeight = {minHeight}
                     windowRef={panelRef}/>
                 <div style={{width:'100%',height:'100%'}}>
-                    <div className={'window-content'}>
+                    <div className={'window-content'} style={styles} >
                         { children }
                     </div>    
                 </div>

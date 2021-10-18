@@ -1,8 +1,18 @@
-import React, { useContext }from 'react';
+import React, { useContext, useEffect, useState }from 'react';
 import ModalWindow from '../../ModalWindow/ModalWindow';
-import { FoERequest } from '../../../FoeHelper/FoeRequest';
-import { armyManagement } from '../../../FoeHelper/ArmyManagement/ArmyManagement';
+
+import { FoEconsole } from '../../../FoeHelper/Foeconsole/Foeconsole';
+
 export default function Window4({open,setOpen}) {
+    const [logs, setlogs] = useState('')
+    useEffect(() => {
+        const updatelogs = (e)=>setlogs(e)
+        FoEconsole.on('onNewLog',updatelogs);
+        return () => {
+            //cleanup
+            FoEconsole.off('onNewLog',updatelogs)
+        }
+    }, [])
     return(
         <ModalWindow
             title={'Modal Menu'}
@@ -14,11 +24,13 @@ export default function Window4({open,setOpen}) {
             openWindow={open}
             closeWindow={()=>setOpen(false)}>
             <button onClick={async ()=>{
-                //console.log(FoeHelper.ArmyManagement)
-                // let request = [{"__class__":"ServerRequest","requestData":[{"__class__":"ArmyContext","content":"main"}],"requestClass":"ArmyUnitManagementService","requestMethod":"getArmyInfo"}]
-                //console.log( await armyManagement.getArmyType() );
-                console.log(armyManagement)
+                FoEconsole.console('cacat','test','plm');
             }}>Test</button>
+            <p>
+            {
+                logs
+            }
+            </p>
         </ModalWindow>
     )
 }

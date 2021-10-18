@@ -31,10 +31,6 @@ export default function ArmyWindow({open,setOpen}) {
                 return [...last,e]
             })
     },[]) 
-    const updateSaveArmy = (e,i)=>{
-        saveArmy.splice(i,1);
-        setsaveArmy([...saveArmy])
-    }
     return(
         <ModalWindow title={'Army Management'} initialWidth={690} initialHeight={490} minWidth={300} minHeight={200} 
         center={true} openWindow={open} closeWindow={()=>setOpen(false)}>
@@ -42,8 +38,10 @@ export default function ArmyWindow({open,setOpen}) {
                 <div label="Attack Army">
                     <ArmyShowcase 
                         onRemove={index=> {
-                            armyManagement.attackArmy.splice(index,1) ;
-                            setattackArmy(armyManagement.attackArmy) 
+                            const newArmy = [...attackArmy];
+                            newArmy.splice(index,1) 
+                            armyManagement.attackArmy = newArmy;
+                            setattackArmy(newArmy) 
                         }}
                         onMove={(from, to)=>{
                             if(to < 0 || to > attackArmy.length) return;
@@ -57,18 +55,28 @@ export default function ArmyWindow({open,setOpen}) {
                                 else
                                     if(saveArmy.length > 0) {
                                         armyManagement.attackArmy = [...attackArmy,saveArmy];
-                                        setattackArmy(armyManagement.attackArmy) 
+                                        setattackArmy( armyManagement.attackArmy) 
                                     }                              
                         }}
-                        saveUnitSelected={updateSaveArmy}
+                        saveUnitSelected={(e,i)=>{
+                            saveArmy.splice(i,1);
+                            setsaveArmy([...saveArmy])
+                        }}
                         armys={attackArmy}
-                        saveArmy={saveArmy}/>
+                        saveArmy={saveArmy}
+                        armySelected={(e)=>{
+                            armyManagement.setNewArmy(e) 
+                        }}
+                        />
                 </div>
                 <div label="GvG Army">
                     <ArmyShowcase 
+                        typeGvG={true}
                         onRemove={index=> {
-                            armyManagement.gvgArmy.splice(index,1);
-                            setgvgArmy(armyManagement.gvgArmy) 
+                            const newArmy = [...gvgArmy];
+                            newArmy.splice(index,1) 
+                            armyManagement.gvgArmy = newArmy;
+                            setgvgArmy(newArmy) 
 
                         }}
                         onMove={(from, to)=>{
@@ -86,9 +94,14 @@ export default function ArmyWindow({open,setOpen}) {
                                         setgvgArmy(armyManagement.gvgArmy)
                                     }                            
                         }}
-                        saveUnitSelected={updateSaveArmy}
+                        saveUnitSelected={(e,i)=>{
+                            saveArmy.splice(i,1);
+                            setsaveArmy([...saveArmy])
+                        }}
                         armys={gvgArmy}
-                        saveArmy={saveArmy}/>
+                        saveArmy={saveArmy}
+                        armySelected={(e)=>console.log(e)}
+                        />
                 </div>
             </TabNavigation>
             <ArmyPool 

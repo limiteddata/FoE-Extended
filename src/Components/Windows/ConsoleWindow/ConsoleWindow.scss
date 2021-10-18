@@ -1,0 +1,11 @@
+@import '../../../styles/properties';
+@import '../../../styles/components';
+
+.consoleContainer {
+  @include DarkWoodBackground;
+  width: 92%;
+  height: 84%;
+  resize: none;
+  padding: 10px;
+  box-sizing: border-box;
+}

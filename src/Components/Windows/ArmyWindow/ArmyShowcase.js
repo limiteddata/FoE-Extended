@@ -2,11 +2,11 @@ import React, {useState} from 'react'
 import ArmyUnit from './ArmyUnit'
 import { v4 as uuid} from 'uuid';
 
-function ArmyContainer({army, style, unitSelected, setPos, remove}) {
+function ArmyContainer({army, style, unitSelected, armySelected, setPos, remove}) {
     return (
-        <div className='armyItem' style={style}>
+        <div className='armyItem' style={style} onClick={()=>armySelected(army)}>
             {
-                remove && <span className='removeBtn' onClick={()=>remove()}></span>
+                remove && <span className='removeBtn' onClick={(e)=>{e.stopPropagation(); remove() }}></span>
             } 
             <div className='armyContent'>
                 {
@@ -21,8 +21,8 @@ function ArmyContainer({army, style, unitSelected, setPos, remove}) {
             {
                 setPos &&            
                 <div>
-                    <div className='selbutton' onClick={()=>setPos(-1)}></div>
-                    <div className='selbutton selbtndown' onClick={()=>setPos(1)}></div>
+                    <div className='selbutton' onClick={(e)=>{e.stopPropagation(); setPos(-1)}}></div>
+                    <div className='selbutton selbtndown' onClick={(e)=>{e.stopPropagation(); setPos(1)}}></div>
                 </div>
             }
         </div>
@@ -30,11 +30,12 @@ function ArmyContainer({army, style, unitSelected, setPos, remove}) {
 }
 
 
-export default function ArmyShowcase({armys, saveArmy, saveUnitSelected, onRemove, onMove, onNewArmy}) {
+export default function ArmyShowcase({armys, typeGvG, saveArmy, saveUnitSelected, armySelected,  onRemove, onMove, onNewArmy}) {
     const [state, setstate] = useState(false)
+
     return (
         <div className='showcaseWrapper'>
-            <span className={`attackbtn ${ state ?'attackbtnselected':''}`} onClick={()=>{ onNewArmy(!state); setstate(e=>!e); }} ></span>
+            <span className={`${typeGvG?'typeGvG':'attackbtn'} ${ state ? ( typeGvG? 'typeGvGselected':'attackbtnselected'): '' }`} onClick={()=>{ onNewArmy(!state); setstate(e=>!e); }} ></span>
             <div className='armyWrapper'>
                 {
                     armys.map((army,i)=>{
@@ -42,6 +43,7 @@ export default function ArmyShowcase({armys, saveArmy, saveUnitSelected, onRemov
                                 setPos={(to)=>onMove(i, i+to)}
                                 remove={()=>onRemove(i)}
                                 key={uuid()} 
+                                armySelected={(unit)=>armySelected(unit)}
                                 army={army} />
                     })
                 }

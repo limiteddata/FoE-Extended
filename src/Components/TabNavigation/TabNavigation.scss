@@ -40,14 +40,14 @@
 }
 .tab-list-item p {
   @include HeaderFont;
-  color: $TextDarkBlue;
+  color: $TextDarkBlue !important;
 }
 .tab-list-active {
   background-image: url('https://foero.innogamescdn.com/assets/shared/gui/profile/tab_btn_selected.png');
 }
 .tab-list-active p {
   @include HeaderFont;
-  color: $TextLightBlue;
+  color: $TextLightBlue !important;
 }
 .tab-content {
   width: 100%;
