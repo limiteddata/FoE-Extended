@@ -4,7 +4,7 @@ import './ConsoleWindow.scss';
 import { FoEconsole } from '../../../FoeHelper/Foeconsole/Foeconsole';
 
 export default function ConsoleWindow({open,setOpen}) {
-    const [logs, setlogs] = useState('')
+    const [logs, setlogs] = useState(FoEconsole.getLogs())
     const reftextarea = useRef();
     const styles = {
         height: '100%',

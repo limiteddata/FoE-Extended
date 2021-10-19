@@ -23,3 +23,23 @@
   background: #281207;
   border-radius: 10px;
 }
+
+button {
+  @include flexAllcenter;
+  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/payNarrowUp.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  width: 95px;
+  height: 35px;
+  margin: 5px;
+}
+button:hover {
+  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/payNarrowOver.png');
+}

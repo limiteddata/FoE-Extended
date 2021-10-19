@@ -8,7 +8,11 @@ class Foeconsole extends EventEmitter{
         super();
     }
     console(...args){
-        this.logs.push({timestamp: new Date().toTimeString().slice(0,8), text: args.join(' ')})
+        const text = args.map(arg=>{
+            if(arg.constructor !== String) return JSON.stringify(arg,null, "\t")
+            return arg
+        })
+        this.logs.push({timestamp: new Date().toTimeString().slice(0,8), text: text.join(' ')})
         if(this.logs.length>=this.maxLength) this.logs.shift();
         console.log(this.getLastLog());
         this.emit("logsChanged", this.getLogs());

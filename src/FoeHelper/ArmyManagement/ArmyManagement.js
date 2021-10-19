@@ -1,6 +1,7 @@
 import { ages, armyClass } from './items';
 import { FoERequest } from '../FoeRequest';
 import { FoEProxy } from '../FoeProxy'
+import { FoEconsole } from '../Foeconsole/Foeconsole';
 
 const EventEmitter = require("events");
 
@@ -118,7 +119,7 @@ class ArmyManagement extends EventEmitter{
 
         const request = [{ "__class__": "ServerRequest", "requestData": [[{ "__class__": "ArmyPool", "units": [...attackIDs], "type": "attacking" }, { "__class__": "ArmyPool", "units": [...defendingIDs], "type": "defending" }, { "__class__": "ArmyPool", "units": [...arena_defendingIDs], "type": "arena_defending" }], { "__class__": "ArmyContext", "content": "main" }], "requestClass": "ArmyUnitManagementService", "requestMethod": "updatePools" }];
         await FoERequest.XHRRequestAsync(request, 0);
-        console.log('New army set');
+        FoEconsole.console('New army set');
     }
 }
 

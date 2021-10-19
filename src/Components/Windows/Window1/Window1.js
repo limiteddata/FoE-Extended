@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { render } from 'react-dom';
 import ModalWindow from '../../ModalWindow/ModalWindow';
 import TabNavigation from '../../TabNavigation/TabNavigation';
+import { urlResolver } from '../../../FoeHelper/URLResolver';
 
-import URLResolver from '../../../../utils/URLResolver';
-const icon1 = URLResolver('/src/assets/img/icon1.png')
-const icon2 = URLResolver('/src/assets/img/icon-128.png')
+const icon1 = urlResolver.resolve('/src/assets/img/icon1.png')
+const icon2 = urlResolver.resolve('/src/assets/img/icon-128.png')
 
 export default function Window1({open,setOpen}) {
     return(
