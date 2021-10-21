@@ -4,7 +4,7 @@ import './Modal.scss'
 import ModalHeader from './ModalHeader';
 import ResizerWindow from './ResizerWindow';
 
-export default function ModalWindow({title, styles, settings, center, initialWidth, initialHeight, initialX, initialY, minWidth, minHeight, openWindow,closeWindow,children}) {
+export default function ModalWindow({title, contentstyle, windowstyle, settings, openWindow,closeWindow,children}) {
     const panelRef = useRef(null);
 
     const elements = document.getElementsByClassName('focus');
@@ -13,12 +13,7 @@ export default function ModalWindow({title, styles, settings, center, initialWid
     }
     return createPortal(
         <>   
-            <div className={`window-body ${openWindow?'focus':''}`} style={{
-                width: initialWidth, 
-                height: initialHeight,
-                top: initialY?initialY:center&&(window.innerHeight-initialHeight)/2, 
-                left: initialX?initialX:center&&(window.innerWidth-initialWidth)/2, 
-                }} ref={panelRef}>
+            <div className={`window-body ${openWindow?'focus':''}`} style={windowstyle} ref={panelRef}>
                 <ModalHeader
                     settings={settings}
                     headerTitle={title}
@@ -26,11 +21,9 @@ export default function ModalWindow({title, styles, settings, center, initialWid
                     windowRef={panelRef}/>
     
                 <ResizerWindow
-                    minWidth = {minWidth}
-                    minHeight = {minHeight}
                     windowRef={panelRef}/>
                 <div style={{width:'100%',height:'100%'}}>
-                    <div className={'window-content'} style={styles} >
+                    <div className={'window-content'} style={contentstyle} >
                         { children }
                     </div>    
                 </div>

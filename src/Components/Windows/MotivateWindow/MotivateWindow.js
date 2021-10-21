@@ -1,30 +1,44 @@
 import React, { useEffect,useState } from 'react';
 import ModalWindow from '../../ModalWindow/ModalWindow';
 import './MotivateWindow.scss';
-import { FoEPlayers } from '../../../FoeHelper/FoEPlayers/FoEPlayers';
-import { FoEconsole } from '../../../FoeHelper/Foeconsole/Foeconsole';
+import { FoEPlayerUtils } from '../../../FoeHelper/FoEPlayers/FoePlayerUtils';
+import { FoEAutoMPT } from '../../../FoeHelper/FoEPlayers/AutoMPT';
+import Checkbox from '../../Checkbox/Checkbox';
+const windowstyle={
+    width: 350,
+    height: 300
+}
 export default function MotivateWindow({open,setOpen}) {
 
     return(
-        <ModalWindow title={'Motivate/Tavern'} initialWidth={360} initialHeight={150} minWidth={220} minHeight={100} 
-        center={true} openWindow={open} closeWindow={()=>setOpen(false)}>
-            <div>
-                <div style={{display:'flex', flexDirection:'row', margin:10}}>
-                    <button onClick={async ()=>await FoEPlayers.MotivateNeighbors()} >Motivate Neighbors</button>
-                    <button onClick={async ()=> await FoEPlayers.MotivateClanMembers()}>Motivate Clan</button>
-                    <button onClick={async ()=> await FoEPlayers.MotivateFriends()}>Motivate Friends</button>
-                    <button onClick={async ()=> await FoEPlayers.MotivateFriends()}>Remove inactive Friends</button>
+        <ModalWindow title={'Motivate/Tavern'} windowstyle={windowstyle} openWindow={open} closeWindow={()=>setOpen(false)}>
+            <div id='autoContent'>
+                <div className='flexRow'>
+                    <button onClick={async ()=> await FoEPlayerUtils.MotivateNeighbors()} >Motivate Neighbors</button>
+                    <Checkbox label={'Auto M/P Neighbors'}
+                        onChanged={(e)=> FoEAutoMPT.autoMotivateNeighbors = e}
+                        checked={FoEAutoMPT.autoMotivateNeighbors}/>
                 </div>
-
-                <div style={{display:'flex', flexDirection:'row', margin:10}}>
-                    <button onClick={async ()=> await FoEPlayers.CollectTavern()}>Collect Tavern</button>
-                    <button onClick={async ()=> await FoEPlayers.seatToTavernsMain()}>Seat to taverns</button>
+                <div className='flexRow'>
+                    <button onClick={async ()=> await FoEPlayerUtils.MotivateClanMembers()}>Motivate Clan</button>
+                    <Checkbox label={'Auto M/P Clan'}
+                        onChanged={(e)=> FoEAutoMPT.autoMotivateClanMembers = e}
+                        checked={FoEAutoMPT.autoMotivateClanMembers}/>
                 </div>
-                
-                <i>Auto Tavern</i><input type='checkbox' />
-                <i>Auto Motivate Neighbors</i><input type='checkbox' />
-                <i>Auto Motivate Clan</i><input type='checkbox' />
-                <i>Auto Motivate Friends</i><input type='checkbox' />
+                <div className='flexRow'>
+                    <button onClick={async ()=> await FoEPlayerUtils.MotivateFriends()}>Motivate Friends</button>
+                    <Checkbox label={'Auto M/P Friends'}                        
+                        onChanged={(e)=> FoEAutoMPT.autoMotivateFriends = e}
+                        checked={FoEAutoMPT.autoMotivateFriends}/>
+                </div>
+                <div className='flexRow'>
+                    <button onClick={async ()=> await FoEPlayerUtils.seatToAllTaverns()}>Seat to taverns</button>
+                    <Checkbox label={'Auto Tavern'} 
+                        onChanged={(e)=> FoEAutoMPT.autoTavern = e}
+                        checked={FoEAutoMPT.autoTavern}/>
+                </div>
+                <button onClick={async ()=> await FoEPlayerUtils.removeInactivePlayers()}>Remove Inactive</button>
+                <button onClick={async ()=> await FoEPlayerUtils.CollectTavern()}>Collect Tavern</button>
             </div>
         </ModalWindow>
     )

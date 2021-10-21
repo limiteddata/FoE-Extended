@@ -1,22 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { render } from 'react-dom';
+import { useLocalState } from '../../hooks/useLocalState';
 
 export default function ModalHeader({headerTitle, settings, windowRef, onCloseWindow }) {
+    
+    const [lastPosition, setlastPosition] = useLocalState({top:200,left:200},`lastPos_${headerTitle}`);
+
     const [mouseDown, setMouseDown] = useState(false);
     const bringToFront = ()=>{
       let elements = document.getElementsByClassName('focus');
-      for (let i = 0; i < elements.length; i++) {
-        elements[i].classList.remove('focus');
-        
-      }
+      for (let i = 0; i < elements.length; i++) elements[i].classList.remove('focus');
       windowRef.current.classList.add("focus");
     }
     const handleMouseDown = ()=>{
       bringToFront();
       setMouseDown(true);
     }
+
     useEffect(() => {
-      const handleMouseUp = () => setMouseDown(false);
+      //handle init 
+      const panel = windowRef.current;
+      if (!panel) return;
+      panel.style.left = lastPosition.left;
+      panel.style.top = lastPosition.top;
+      const handleMouseUp = () => {
+        setMouseDown(false);
+        setlastPosition({top:panel.style.top,left:panel.style.left})
+      }
       window.addEventListener('mouseup', handleMouseUp);
       return () => {
         window.removeEventListener('mouseup', handleMouseUp);

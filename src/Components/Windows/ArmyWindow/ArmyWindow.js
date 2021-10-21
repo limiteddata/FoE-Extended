@@ -7,6 +7,11 @@ import { armyManagement } from '../../../FoeHelper/ArmyManagement/ArmyManagement
 import ArmyShowcase from './ArmyShowcase';
 import {arrayMoveImmutable} from 'array-move';
 
+const windowstyle={
+    width: 690, 
+    height: 490,
+}
+
 export default function ArmyWindow({open,setOpen}) {
     const [armyPool, setarmyPool] = useState(armyManagement.ArmyPool)
 
@@ -32,8 +37,7 @@ export default function ArmyWindow({open,setOpen}) {
             })
     },[]) 
     return(
-        <ModalWindow title={'Army Management'} initialWidth={690} initialHeight={490} minWidth={300} minHeight={200} 
-        center={true} openWindow={open} closeWindow={()=>setOpen(false)}>
+        <ModalWindow title={'Army Management'} windowstyle={windowstyle} openWindow={open} closeWindow={()=>setOpen(false)}>
             <TabNavigation>
                 <div label="Attack Army">
                     <ArmyShowcase 

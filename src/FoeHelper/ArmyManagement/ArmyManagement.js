@@ -2,6 +2,7 @@ import { ages, armyClass } from './items';
 import { FoERequest } from '../FoeRequest';
 import { FoEProxy } from '../FoeProxy'
 import { FoEconsole } from '../Foeconsole/Foeconsole';
+import { requestJSON } from '../Utils';
 
 const EventEmitter = require("events");
 
@@ -16,6 +17,7 @@ class ArmyManagement extends EventEmitter{
         return this.#gvgArmy;
     }
     set gvgArmy(e){
+        if(this.#gvgArmy === e) return;
         this.#gvgArmy = e;
         localStorage.setItem('gvgArmy', JSON.stringify(e));
     }
@@ -25,6 +27,7 @@ class ArmyManagement extends EventEmitter{
         return this.#attackArmy;
     }
     set attackArmy(e){
+        if(this.#attackArmy === e) return;
         this.#attackArmy = e;
         localStorage.setItem('attackArmy', JSON.stringify(e));
     }
@@ -88,12 +91,12 @@ class ArmyManagement extends EventEmitter{
         }).then();
     }
     getArmyInfo = async () => {
-        let request = [{ "__class__": "ServerRequest", "requestData": [{ "__class__": "ArmyContext", "content": "main" }], "requestClass": "ArmyUnitManagementService", "requestMethod": "getArmyInfo" }];
+        const request = requestJSON("ArmyUnitManagementService","getArmyInfo",[{ "__class__": "ArmyContext", "content": "main" }]);
         return await FoERequest.XHRRequestAsync(request);
     }
 
     getArmyType = async () => {
-        let request = [{ "__class__": "ServerRequest", "requestData": [], "requestClass": "ArmyUnitManagementService", "requestMethod": "getUnitTypes" }];
+        const request = requestJSON("ArmyUnitManagementService","getUnitTypes");
         return await FoERequest.FetchRequestAsync(request).then(types=>{
             let convertedTypes = {};
             types.forEach(e => convertedTypes[e.unitTypeId] = e);
@@ -102,11 +105,10 @@ class ArmyManagement extends EventEmitter{
     }
 
     setNewArmy = async (setArmy) => {
+        let attackIDs = [];
         const attackarm = setArmy?setArmy:this.attackArmy;
         const defendingIDs = this.ArmyPool.defendingArmy.map(unit => unit.unitId);
         const arena_defendingIDs = this.ArmyPool.arenaDefending.map(unit => unit.unitId);
-        let attackIDs = [];
-
         attackarm.forEach(unit => {
             for (let i = 0; i < this.ArmyPool.unassignedArmy.length; i++) {
                 if (this.ArmyPool.unassignedArmy[i]["unitTypeId"] === unit.unitTypeId &&
@@ -116,10 +118,16 @@ class ArmyManagement extends EventEmitter{
                 }
             }
         });
-
-        const request = [{ "__class__": "ServerRequest", "requestData": [[{ "__class__": "ArmyPool", "units": [...attackIDs], "type": "attacking" }, { "__class__": "ArmyPool", "units": [...defendingIDs], "type": "defending" }, { "__class__": "ArmyPool", "units": [...arena_defendingIDs], "type": "arena_defending" }], { "__class__": "ArmyContext", "content": "main" }], "requestClass": "ArmyUnitManagementService", "requestMethod": "updatePools" }];
+        const requestData = [
+            [   
+                { "__class__": "ArmyPool", "units": [...attackIDs], "type": "attacking" }, 
+                { "__class__": "ArmyPool", "units": [...defendingIDs], "type": "defending" }, 
+                { "__class__": "ArmyPool", "units": [...arena_defendingIDs], "type": "arena_defending" }
+            ], { "__class__": "ArmyContext", "content": "main" }
+        ];
+        const request = requestJSON("ArmyUnitManagementService","updatePools",requestData);
         await FoERequest.XHRRequestAsync(request, 0);
-        FoEconsole.console('New army set');
+        FoEconsole.log('New army set');
     }
 }
 

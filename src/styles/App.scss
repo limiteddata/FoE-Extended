@@ -25,21 +25,27 @@
 }
 
 button {
-  @include flexAllcenter;
-  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/payNarrowUp.png');
-  background-repeat: no-repeat;
+  min-width: 80px;
+  max-width: 130px;
+  min-height: 23px;
+  width: 120px;
+  padding: 4px;
+  font-size: 10pt;
+  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/largeMenuUp.png');
   background-size: 100% 100%;
-  padding: 10px;
-  box-sizing: border-box;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
+  background-color: Transparent;
+  background-repeat: no-repeat;
   border: none;
-  border-radius: 4px;
-  width: 95px;
-  height: 35px;
-  margin: 5px;
+  overflow: hidden;
+  outline: none;
+  margin: 5px 5px 5px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 600;
 }
+
 button:hover {
-  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/payNarrowOver.png');
+  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/largeMenuOver.png');
 }

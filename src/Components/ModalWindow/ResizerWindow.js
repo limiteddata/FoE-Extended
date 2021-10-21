@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { render } from 'react-dom';
 
-export default function ResizerWindow({ windowRef, minWidth = 250, minHeight = 150 }) {
+export default function ResizerWindow({ windowRef }) {
     const [mouseDown, setMouseDown] = useState(false);
-
+    const minWidth = 250;
+    const minHeight = 150;
     useEffect(() => {
       const handleMouseMove = (e) => {  
         const panel = windowRef.current;

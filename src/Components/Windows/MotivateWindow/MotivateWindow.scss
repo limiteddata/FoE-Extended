@@ -1,2 +1,13 @@
 @import '../../../styles/properties';
 @import '../../../styles/components';
+
+#autoContent {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.flexRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

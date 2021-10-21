@@ -3,11 +3,11 @@ const EventEmitter = require("events");
 
 class Foeconsole extends EventEmitter{  
     logs = [];
-    maxLength = 45;
+    maxLength = 65;
     constructor(){
         super();
     }
-    console(...args){
+    log(...args){
         const text = args.map(arg=>{
             if(arg.constructor !== String) return JSON.stringify(arg,null, "\t")
             return arg
@@ -27,5 +27,6 @@ class Foeconsole extends EventEmitter{
 }
 
 const FoEconsole = new Foeconsole();
+FoEconsole.log(`Extention version v0.1.0 loaded!`);
 
 export { FoEconsole }

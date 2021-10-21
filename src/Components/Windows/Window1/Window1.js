@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import ModalWindow from '../../ModalWindow/ModalWindow';
 import TabNavigation from '../../TabNavigation/TabNavigation';
 import { urlResolver } from '../../../FoeHelper/URLResolver';
+import Checkbox from '../../Checkbox/Checkbox';
 
 const icon1 = urlResolver.resolve('/src/assets/img/icon1.png')
 const icon2 = urlResolver.resolve('/src/assets/img/icon-128.png')
@@ -20,7 +21,7 @@ export default function Window1({open,setOpen}) {
             <TabNavigation>
                 <div label="Attack" icon={icon1}>
                     <div >
-                        <p>Attack</p>
+                        
                     </div>
                 </div>
                 <div label="Tab2" icon={icon2}>

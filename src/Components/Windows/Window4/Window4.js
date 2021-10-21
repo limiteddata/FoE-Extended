@@ -24,7 +24,7 @@ export default function Window4({open,setOpen}) {
             openWindow={open}
             closeWindow={()=>setOpen(false)}>
             <button onClick={async ()=>{
-                FoEconsole.console('cacat','test','plm');
+                FoEconsole.log('cacat','test','plm');
             }}>Test</button>
             <p>
             {

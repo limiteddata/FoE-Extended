@@ -7,4 +7,7 @@ function getResponseMethod(json, methodName){
     }
     return null;
 }
-export {wait, getResponseMethod}
+function requestJSON(requestClass,requestMethod,requestData=[]){
+    return [{"__class__":"ServerRequest","requestData":requestData,"requestClass":requestClass,"requestMethod":requestMethod}];
+}
+export {wait, requestJSON,getResponseMethod}
