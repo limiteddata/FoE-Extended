@@ -7,12 +7,12 @@ import ArmyWindow from '../../Components/Windows/ArmyWindow/ArmyWindow';
 import Window4 from '../../Components/Windows/Window4/Window4';
 import ConsoleWindow from '../../Components/Windows/ConsoleWindow/ConsoleWindow';
 import MotivateWindow from '../../Components/Windows/MotivateWindow/MotivateWindow';
-import StealWindow from '../../Components/Windows/StealWindow/StealWindow';
+import PlunderWindow from '../../Components/Windows/PlunderWindow/PlunderWindow';
 
 const armyicon = urlResolver.resolve('/src/assets/img/icon_armyManagement.png')
 const terminal = urlResolver.resolve('/src/assets/img/terminal.png')
 const motivate = urlResolver.resolve('/src/assets/img/motivate.png')
-const steal = urlResolver.resolve('/src/assets/img/steal.png')
+const plunder = urlResolver.resolve('/src/assets/img/steal.png')
 const attack = urlResolver.resolve('/src/assets/img/attack.png')
 
 export default function FoeMainMenu() {
@@ -32,8 +32,8 @@ export default function FoeMainMenu() {
                 component={<MotivateWindow/>}/>        
             <MenuItem
                 name={'Steal Menu'}
-                icon={steal}
-                component={<StealWindow/>}/>     
+                icon={plunder}
+                component={<PlunderWindow/>}/>     
             <MenuItem
                 name={'Production Menu'}
                 icon={attack}

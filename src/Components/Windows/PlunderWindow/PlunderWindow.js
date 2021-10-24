@@ -1,19 +1,19 @@
 import React, { useEffect,useState } from 'react';
 import ModalWindow from '../../ModalWindow/ModalWindow';
-import './StealWindow.scss';
+import './PlunderWindow.scss';
 import ListView from '../../ListView/ListView'
 import { FoEPlunder } from '../../../FoeHelper/FoePlunder/FoePlunder';
 import Checkbox from '../../Checkbox/Checkbox';
 import Input from '../../Input/Input';
 
 import CityBuilding from '../../CityBuilding/CityBuilding';
-import StealButton from './StealButton';
+import PlunderButton from './PlunderButton';
 
 const windowstyle = {
     width: 615,
     height: 385,
 }
-export default function StealWindow({open,setOpen}) {  
+export default function PlunderWindow({open,setOpen}) {  
     
     const modifiedBuilding = (e)=>{ 
         return e.map(building=>{
@@ -23,7 +23,7 @@ export default function StealWindow({open,setOpen}) {
                 <CityBuilding name={building.cityentity_id}/>,
                 building.cityentity_id.split('_')[2], 
                 `${building.fp} FP`, 
-                <StealButton
+                <PlunderButton
                     onClick={()=>FoEPlunder.plunderBuilding(building.player_id, building.building_id)}/>
             ]
     })}
@@ -42,7 +42,7 @@ export default function StealWindow({open,setOpen}) {
         }
     }, [])
     return(
-        <ModalWindow title={'Steal Menu'} windowstyle={windowstyle} openWindow={open} closeWindow={()=>setOpen(false)}>
+        <ModalWindow title={'Plunder Menu'} windowstyle={windowstyle} openWindow={open} closeWindow={()=>setOpen(false)}>
             <div className='row'>       
                 <div className='col'>
                     <button onClick={()=>{

@@ -1,7 +1,7 @@
 import React from 'react'
-import './StealWindow.scss';
+import './PlunderWindow.scss';
 
-export default function StealButton({onClick}) {
+export default function PlunderButton({onClick}) {
     return (
         <img 
             className='stealButton'
