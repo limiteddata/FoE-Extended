@@ -9,7 +9,7 @@ import {arrayMoveImmutable} from 'array-move';
 
 const windowstyle={
     width: 690, 
-    height: 490,
+    height: 500,
 }
 
 export default function ArmyWindow({open,setOpen}) {
@@ -22,11 +22,11 @@ export default function ArmyWindow({open,setOpen}) {
     useEffect(() => {
         // on window mount
         const updateArmy = army => setarmyPool(army)
-        armyManagement.on('ArmyPoolCanged',updateArmy);
-        armyManagement.getArmyInfo();
+        armyManagement.on('ArmyPoolChanged',updateArmy);
+        armyManagement.updateArmy();
         return () => {
             //cleanup
-            armyManagement.off('ArmyPoolCanged',updateArmy)
+            armyManagement.off('ArmyPoolChanged',updateArmy)
         }
     }, [])
     const [saveArmy, setsaveArmy] = useState([])

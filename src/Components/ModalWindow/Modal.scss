@@ -26,16 +26,15 @@
   border-radius: 20px;
 }
 .window-content {
-  display: flex;
-  align-items: center;
+  @include flexHcenter;
   flex-direction: column;
   width: 100%;
+  height: 98%;
   margin-top: 2px;
   padding-left: 3px;
   padding-right: 4px;
   padding-bottom: 6px;
   border-radius: 0px 0px 20px 20px;
-  box-sizing: border-box;
   overflow: auto;
 }
 .window-header {

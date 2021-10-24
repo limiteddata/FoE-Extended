@@ -1,2 +1,21 @@
 @import '../../../styles/properties';
 @import '../../../styles/components';
+
+.row {
+  @include flexAllcenter;
+  flex-direction: row;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+}
+.col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin: 5px;
+  align-items: flex-end;
+}
+
+.stealButton {
+  cursor: pointer;
+}

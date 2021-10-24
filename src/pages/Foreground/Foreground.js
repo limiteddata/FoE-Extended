@@ -2,9 +2,10 @@ import React from 'react';
 import { render } from 'react-dom';
 import FoeMainMenu from '../../Components/FoeMainMenu/FoeMainMenu';
 
-function Foreground() {   
+function Foreground() {  
     return (          
         <FoeMainMenu/>
+
     )
 }
 

@@ -18,8 +18,9 @@
   border-image-repeat: round round;
   border-image-source: url('https://foero.innogamescdn.com/assets/shared/gui/buffbar/buffbar_bg_panel_9slice.png');
   border-style: solid;
-
   border-right: 0px;
+
+  box-sizing: content-box;
 }
 .content {
   width: 100%;
@@ -40,12 +41,9 @@
   height: 56px;
   background-image: url('https://foero.innogamescdn.com/assets/shared/gui/buffbar/buffbar_slot_bg_orange.png');
   background-size: cover;
-  box-sizing: border-box;
   padding: 12px;
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flexAllcenter;
 }
 .itemActive {
   background-image: url('https://foero.innogamescdn.com/assets/shared/gui/buffbar/buffbar_slot_bg_green.png');

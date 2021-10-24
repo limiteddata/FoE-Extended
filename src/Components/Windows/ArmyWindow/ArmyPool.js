@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useRef } from 'react'
 import ArmyUnit from './ArmyUnit'
 import { v4 as uuid} from 'uuid';
 import { ages } from '../../../FoeHelper/ArmyManagement/items';
@@ -6,6 +6,7 @@ import Dropdown from 'react-dropdown';
 import { armyManagement } from '../../../FoeHelper/ArmyManagement/ArmyManagement';
 
 export const ArmyPool = React.memo( ({unassignedArmy,defendingArmy, onUnitSelected}) => {
+    const contentRef = useRef()
     const [activeTab, setActiveTab] = useState('units_all');
     const [age, setAge] = useState('AllAge');
     const changeActiveTab = (tab)=>{
@@ -26,6 +27,13 @@ export const ArmyPool = React.memo( ({unassignedArmy,defendingArmy, onUnitSelect
         return filtered;
     }
     const currentUnits = filterArmy()
+    useEffect(() => {
+        contentRef.current.onwheel = (evt) => {
+            evt.preventDefault();
+            contentRef.current.scrollLeft += evt.deltaY;
+        };
+    }, [contentRef])
+
 
     return (
         <div className={'poolWrapper'}>   
@@ -38,7 +46,7 @@ export const ArmyPool = React.memo( ({unassignedArmy,defendingArmy, onUnitSelect
                 <TabItem label={'short_ranged'} activeTab={activeTab} onClick={changeActiveTab}/>
                 <Dropdown options={ages} onChange={(e)=>setAge(e.value)} value={age} />
             </ol> 
-            <div className={'poolContent'}>
+            <div className={'poolContent'} ref={contentRef}>
                 {      
                     currentUnits.map((unit)=>    
                         <ArmyUnit

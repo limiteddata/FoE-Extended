@@ -5,8 +5,8 @@ import { FoEconsole } from '../../../FoeHelper/Foeconsole/Foeconsole';
 
 
 const windowstyle={
-    width: 400, 
-    height: 160,
+    width: 410, 
+    height: 185,
 }
 
 const contentstyle = {

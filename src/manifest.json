@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "version": "0.1.0",
-  "name": "Foe Helper Bot",
+  "version": "0.1.1",
+  "name": "FOE Extended",
   "description": "Enhance your forge of empires experience",
   "background": { "service_worker": "/src/pages/background/background.bundle.js" },
   "action": {

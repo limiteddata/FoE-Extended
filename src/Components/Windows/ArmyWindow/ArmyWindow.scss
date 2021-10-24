@@ -15,15 +15,12 @@
   background-repeat: no-repeat;
   margin: 3px;
   background-size: 100% 100%;
-  box-sizing: border-box;
 }
 .frameContainer {
   width: 90%;
   height: 100%;
-  display: flex;
-  justify-content: center;
+  @include flexAllcenter;
   flex-direction: column;
-  align-items: center;
   margin: 0px auto;
 }
 .healthbar {
@@ -73,21 +70,18 @@
   background-image: url('https://foero.innogamescdn.com/assets/shared/gui/armyunitmanagement/unitPoolBgBottom.jpg');
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  width: 658px;
-  height: 219px;
-  padding: 1px;
-  box-sizing: content-box;
+  padding-left: 14px;
+  padding-right: 14px;
+  height: 370px;
 }
+
 .poolHeader {
   list-style: none;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: flex-end;
-  height: 39px;
-  padding-left: 15px;
-  padding-right: 15px;
-  margin: 0;
+  height: 38px;
 }
 .poolTab {
   width: 39px;
@@ -97,15 +91,12 @@
 }
 .poolContent {
   width: 625px;
-  height: 147px;
-  margin-top: 13px;
+  height: 160px;
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
   align-content: flex-start;
   overflow-x: auto;
-  position: relative;
-  left: 15px;
 }
 
 .arrow-closed,
@@ -144,7 +135,6 @@
   cursor: default;
   outline: none;
   padding: 7px 52px 10px 16px;
-  box-sizing: border-box;
   transition: all 200ms ease;
   min-width: 135px;
   height: 30px;
@@ -181,7 +171,6 @@
 .Dropdown-menu {
   background-color: #404a62;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
-  box-sizing: border-box;
   margin-top: -1px;
   max-height: 150px;
   overflow-y: auto;
@@ -200,7 +189,6 @@
 }
 
 .Dropdown-option {
-  box-sizing: border-box;
   background-image: url('https://foero.innogamescdn.com/assets/shared/gui/components/combobox_list_center_top_hud.png');
   cursor: pointer;
   display: block;
@@ -227,7 +215,6 @@
 }
 
 .Dropdown-noresults {
-  box-sizing: border-box;
   color: #ccc;
   cursor: default;
   display: block;
@@ -271,18 +258,14 @@
   width: 446px;
   overflow-y: auto;
   padding: 10px;
-  box-sizing: border-box;
 }
 .armyItem {
   @include WoodBackground;
-  display: flex;
+  @include flexAllcenter;
   flex-direction: row;
-  align-items: center;
-  justify-content: center;
   margin-bottom: 10px;
   padding-left: 5px;
   padding-right: 5px;
-  box-sizing: border-box;
   cursor: cell;
 }
 

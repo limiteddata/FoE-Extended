@@ -34,6 +34,10 @@ class FoePlayers extends EventEmitter{
 
         return {"unlockedChairs":unlockedChairs,"occupiedSeats":occupiedSeats};
     }
+    async visitPlayerCity(playerId){   
+        const request = requestJSON("OtherPlayerService","visitPlayer",[playerId])  
+        return await FoERequest.FetchRequestAsync(request,0);
+    }
 }
 
 const FoEPlayers = new FoePlayers();

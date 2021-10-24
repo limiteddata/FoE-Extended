@@ -35,69 +35,70 @@ class ArmyManagement extends EventEmitter{
     armyTypes = {}
 
     constructor() {   
-
         super();
-        new Promise(async (resolve, rejects) =>{
-            const loadedAttackArmy = localStorage.getItem('attackArmy');
-            if(loadedAttackArmy && loadedAttackArmy != 'null')
-                this.attackArmy = JSON.parse(loadedAttackArmy);
-            const loadedGvGArmy = localStorage.getItem('gvgArmy');
-            if(loadedGvGArmy && loadedGvGArmy != 'null')
-                this.gvgArmy = JSON.parse(loadedGvGArmy);
 
+        const loadedAttackArmy = localStorage.getItem('attackArmy');
+        if(loadedAttackArmy && loadedAttackArmy != 'null')
+            this.attackArmy = JSON.parse(loadedAttackArmy);
+        const loadedGvGArmy = localStorage.getItem('gvgArmy');
+        if(loadedGvGArmy && loadedGvGArmy != 'null')
+            this.gvgArmy = JSON.parse(loadedGvGArmy);
+        new Promise(async (res,err)=>{
             this.armyTypes = await this.getArmyType();
-            FoEProxy.addHandler('getArmyInfo', response => {
-                if (response.units === null) return;
-                // sort each unit into groups of same type
-                const temp = { 'defending': [], 'arenaDefending': [] };
-                for (let i = 0; i < response.units.length; i++) {
-                    if(response.units[i].is_defending) temp['defending'].push(response.units[i]);
-                    else if(response.units[i].isArenaDefending) temp['arenaDefending'].push(response.units[i]);
-                    else{
-                        if (!temp.hasOwnProperty(response.units[i].unitTypeId)) temp[response.units[i].unitTypeId] = [];
-                        temp[response.units[i].unitTypeId].push(response.units[i]);
-                    }
-                }
-                // sort by health
-                for (const unit in temp)
-                    temp[unit] = temp[unit].sort((a, b) => b.currentHitpoints - a.currentHitpoints);
-                // filter by era and by class
-                let final = [];
-                for (let i = ages.length - 1; i > 0; i--) {
-                    for (let x = 0; x < armyClass.length; x++) {
-                        for (const unit in temp) {
-                            // if unit era match with age and army class then push to final and splice from temp
-                            if (unit !== 'defending' &&
-                                unit !== 'arenaDefending' &&
-                                this.armyTypes[unit].minEra === ages[i] &&
-                                this.armyTypes[unit].unitClass === armyClass[x]) {
-                                final = [...final, ...temp[unit]];
-                                delete temp[unit];
-                            }
-                        }
-                    }
-                }
-
-
-                this.ArmyPool = {
-                    defendingArmy: temp.defending,
-                    arenaDefending: temp.arenaDefending,
-                    unassignedArmy: final
-                }
-                this.emit("ArmyPoolCanged", this.ArmyPool);
-                
-            });
-            resolve();
+            FoEProxy.addHandler('getArmyInfo', this.__sortArmy) 
+            res();
         }).then();
+    }
+    __sortArmy = (response)=>{
+        if (response.units === null) return;
+        // sort each unit into groups of same type
+        const temp = { 'defending': [], 'arenaDefending': [] };
+        for (let i = 0; i < response.units.length; i++) {
+            if(response.units[i].is_defending) temp['defending'].push(response.units[i]);
+            else if(response.units[i].isArenaDefending) temp['arenaDefending'].push(response.units[i]);
+            else{
+                if (!temp.hasOwnProperty(response.units[i].unitTypeId)) temp[response.units[i].unitTypeId] = [];
+                temp[response.units[i].unitTypeId].push(response.units[i]);
+            }
+        }
+        // sort by health
+        for (const unit in temp)
+            temp[unit] = temp[unit].sort((a, b) => b.currentHitpoints - a.currentHitpoints);
+        // filter by era and by class
+        let final = [];
+        for (let i = ages.length - 1; i > 0; i--) {
+            for (let x = 0; x < armyClass.length; x++) {
+                for (const unit in temp) {
+                    // if unit era match with age and army class then push to final and splice from temp
+                    if (unit !== 'defending' &&
+                        unit !== 'arenaDefending' &&
+                        this.armyTypes[unit].minEra === ages[i] &&
+                        this.armyTypes[unit].unitClass === armyClass[x]) {
+                        final = [...final, ...temp[unit]];
+                        delete temp[unit];
+                    }
+                }
+            }
+        }
+
+        this.ArmyPool = {
+            defendingArmy: temp.defending,
+            arenaDefending: temp.arenaDefending,
+            unassignedArmy: final
+        }
+        this.emit("ArmyPoolChanged", this.ArmyPool);
+    }
+    updateArmy = async () => {
+        this.__sortArmy(await this.getArmyInfo());
     }
     getArmyInfo = async () => {
         const request = requestJSON("ArmyUnitManagementService","getArmyInfo",[{ "__class__": "ArmyContext", "content": "main" }]);
-        return await FoERequest.XHRRequestAsync(request);
+        return await FoERequest.FetchRequestAsync(request,0);
     }
 
     getArmyType = async () => {
         const request = requestJSON("ArmyUnitManagementService","getUnitTypes");
-        return await FoERequest.FetchRequestAsync(request).then(types=>{
+        return await FoERequest.FetchRequestAsync(request,0).then(types=>{
             let convertedTypes = {};
             types.forEach(e => convertedTypes[e.unitTypeId] = e);
             return convertedTypes;
@@ -126,7 +127,7 @@ class ArmyManagement extends EventEmitter{
             ], { "__class__": "ArmyContext", "content": "main" }
         ];
         const request = requestJSON("ArmyUnitManagementService","updatePools",requestData);
-        await FoERequest.XHRRequestAsync(request, 0);
+        await FoERequest.FetchRequestAsync(request, 0);
         FoEconsole.log('New army set');
     }
 }

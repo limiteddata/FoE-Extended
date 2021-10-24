@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React from 'react';
 import ModalWindow from '../../ModalWindow/ModalWindow';
 import './MotivateWindow.scss';
 import { FoEPlayerUtils } from '../../../FoeHelper/FoEPlayers/FoePlayerUtils';
@@ -6,7 +6,7 @@ import { FoEAutoMPT } from '../../../FoeHelper/FoEPlayers/AutoMPT';
 import Checkbox from '../../Checkbox/Checkbox';
 const windowstyle={
     width: 350,
-    height: 300
+    height: 355
 }
 export default function MotivateWindow({open,setOpen}) {
 

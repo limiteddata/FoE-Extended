@@ -41,12 +41,12 @@ class FoePlayerUtils extends EventEmitter{
         FoEconsole.log("Tavern collected");
     }
     async seatToTavern(playerid){
-        const getTavernrequest = requestJSON("FriendsTavernService","getOtherTavernState");
+        const getTavernrequest = requestJSON("FriendsTavernService","getOtherTavernState",[playerid]);
         const tavernsData = await FoERequest.FetchRequestAsync(getTavernrequest,100);
         if(tavernsData.unlockedChairCount != tavernsData.sittingPlayerCount && 
             ["notFriend", "noChair", "isSitting", "noChair", "alreadyVisited"].indexOf(tavernsData["state"]) === -1 ){  
                 FoEconsole.log(`Sitting down at ${tavernsData.ownerId}`);      
-                const sitRequest = requestJSON("FriendsTavernService","getOtherTavern",[tavernsData.ownerId]);
+                const sitRequest = requestJSON("FriendsTavernService","getOtherTavern",[playerid]);
                 await FoERequest.FetchRequestAsync(sitRequest,100);                               
         }
     }

@@ -11,17 +11,17 @@
   text-align: left;
   padding: 0;
   margin: 0;
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
 
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 9px;
+  height: 9px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #281207;
-  border-radius: 10px;
+  background: #8591a5;
+  border-radius: 3px;
 }
 
 button {
@@ -29,7 +29,7 @@ button {
   max-width: 130px;
   min-height: 23px;
   width: 120px;
-  padding: 4px;
+  padding: 8px 4px 8px 4px;
   font-size: 10pt;
   background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/largeMenuUp.png');
   background-size: 100% 100%;
@@ -39,10 +39,8 @@ button {
   overflow: hidden;
   outline: none;
   margin: 5px 5px 5px 0px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   text-align: center;
+  @include flexAllcenter;
   font-weight: 600;
 }
 

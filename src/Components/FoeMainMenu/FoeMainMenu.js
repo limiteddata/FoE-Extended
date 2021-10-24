@@ -4,7 +4,7 @@ import '../../styles/App.scss'
 import MainMenu from '../../Components/MainMenu/MainMenu';
 import MenuItem from '../../Components/MainMenu/MenuItem';
 import ArmyWindow from '../../Components/Windows/ArmyWindow/ArmyWindow';
-import Window1 from '../../Components/Windows/Window1/Window1';
+import Window4 from '../../Components/Windows/Window4/Window4';
 import ConsoleWindow from '../../Components/Windows/ConsoleWindow/ConsoleWindow';
 import MotivateWindow from '../../Components/Windows/MotivateWindow/MotivateWindow';
 import StealWindow from '../../Components/Windows/StealWindow/StealWindow';
@@ -33,15 +33,11 @@ export default function FoeMainMenu() {
             <MenuItem
                 name={'Steal Menu'}
                 icon={steal}
-                component={<StealWindow/>}/>    
-            <MenuItem
-                name={'Attack Menu'}
-                icon={attack}
-                component={<Window1/>}/>    
+                component={<StealWindow/>}/>     
             <MenuItem
                 name={'Production Menu'}
                 icon={attack}
-                component={<Window1/>}/>    
+                component={<Window4/>}/>    
         </MainMenu> 
     )
 }

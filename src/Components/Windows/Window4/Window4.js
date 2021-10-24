@@ -1,18 +1,10 @@
 import React, { useContext, useEffect, useState }from 'react';
 import ModalWindow from '../../ModalWindow/ModalWindow';
 
-import { FoEconsole } from '../../../FoeHelper/Foeconsole/Foeconsole';
-
+import { requestJSON } from '../../../FoeHelper/Utils';
+import { FoERequest } from '../../../FoeHelper/FoeRequest';
 export default function Window4({open,setOpen}) {
-    const [logs, setlogs] = useState('')
-    useEffect(() => {
-        const updatelogs = (e)=>setlogs(e)
-        FoEconsole.on('onNewLog',updatelogs);
-        return () => {
-            //cleanup
-            FoEconsole.off('onNewLog',updatelogs)
-        }
-    }, [])
+
     return(
         <ModalWindow
             title={'Modal Menu'}
@@ -23,14 +15,13 @@ export default function Window4({open,setOpen}) {
             settings={()=>alert('open settings window')}
             openWindow={open}
             closeWindow={()=>setOpen(false)}>
+
             <button onClick={async ()=>{
-                FoEconsole.log('cacat','test','plm');
-            }}>Test</button>
-            <p>
-            {
-                logs
-            }
-            </p>
+                const request = requestJSON("OtherPlayerService","getFriendsList");
+                let response = await FoERequest.FetchRequestAsync(request,0);
+                console.log(response)
+            }}>test</button>
+
         </ModalWindow>
     )
 }

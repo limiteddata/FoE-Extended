@@ -1,33 +1,28 @@
 @import '../../styles/colors';
-
+@import '../../styles/properties';
 .checkboxBody {
   background-image: url('https://foero.innogamescdn.com/assets/shared/gui/window/checkbox_icon_large.png');
   background-size: cover;
   width: 171px;
   height: 30px;
-
-  display: flex;
+  @include flexHcenter;
   flex-direction: row;
-  align-items: center;
   cursor: pointer;
+  margin: 5px;
 }
 
 .checkboxLabel {
   height: 100%;
   width: 142px;
   color: $TextLightBlue !important;
-  display: flex;
-  align-items: center;
+  @include flexHcenter;
   justify-content: flex-start;
   padding-left: 10px;
-  box-sizing: border-box;
 }
 .checkboxCheck {
   width: 26px;
   height: 26px;
   background: url('https://foero.innogamescdn.com/assets/shared/gui/window/checkbox_tick.png');
   background-size: cover;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flexAllcenter;
 }

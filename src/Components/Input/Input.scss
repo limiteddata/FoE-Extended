@@ -1,0 +1,23 @@
+@import '../../styles/colors';
+@import '../../styles/properties';
+@import '../../styles/components';
+
+.inputBody {
+  height: 28px;
+  @include flexHcenter;
+  flex-direction: row;
+  margin: 5px;
+}
+.inputLabel {
+  margin-right: 10px;
+}
+.inputContent {
+  @include DarkWoodBackground;
+  border: 1px solid #945735;
+  height: 100%;
+  width: 60px;
+  padding-left: 10px;
+}
+.inputContent:focus {
+  outline: none;
+}

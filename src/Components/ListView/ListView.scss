@@ -16,7 +16,7 @@ td {
 }
 
 td img {
-  height: 30px;
+  height: 40px;
 }
 
 .table-header {
@@ -27,4 +27,17 @@ td img {
 
 tr:nth-child(even) {
   background-color: $black-50;
+}
+
+.tableWrapper {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+}
+.tableWrapper table thead tr td {
+  position: absolute;
+  top: -20px;
+  z-index: 2;
+  height: 20px;
+  width: 35%;
 }
