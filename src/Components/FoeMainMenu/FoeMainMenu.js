@@ -8,12 +8,14 @@ import Window4 from '../../Components/Windows/Window4/Window4';
 import ConsoleWindow from '../../Components/Windows/ConsoleWindow/ConsoleWindow';
 import MotivateWindow from '../../Components/Windows/MotivateWindow/MotivateWindow';
 import PlunderWindow from '../../Components/Windows/PlunderWindow/PlunderWindow';
+import GBWindow from '../Windows/GBWindow/GBWindow';
 
 const armyicon = urlResolver.resolve('/src/assets/img/icon_armyManagement.png')
 const terminal = urlResolver.resolve('/src/assets/img/terminal.png')
 const motivate = urlResolver.resolve('/src/assets/img/motivate.png')
 const plunder = urlResolver.resolve('/src/assets/img/steal.png')
 const attack = urlResolver.resolve('/src/assets/img/attack.png')
+const gb = urlResolver.resolve('/src/assets/img/great_building.png')
 
 export default function FoeMainMenu() {
     return (
@@ -31,11 +33,15 @@ export default function FoeMainMenu() {
                 icon={motivate}
                 component={<MotivateWindow/>}/>        
             <MenuItem
-                name={'Steal Menu'}
+                name={'Plunder Menu'}
                 icon={plunder}
                 component={<PlunderWindow/>}/>     
             <MenuItem
-                name={'Production Menu'}
+                name={'GB Menu'}
+                icon={gb}
+                component={<GBWindow/>}/>    
+            <MenuItem
+                name={'Untitled Menu'}
                 icon={attack}
                 component={<Window4/>}/>    
         </MainMenu> 

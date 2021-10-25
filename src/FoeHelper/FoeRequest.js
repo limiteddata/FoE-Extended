@@ -24,7 +24,7 @@ class FoeRequest{
         return md5(data).toString(16).slice(0, 10);
     }
 
-    FetchRequestAsync = async (request, delay=400)=>{
+    FetchRequestAsync = async (request, delay=400, raw=false)=>{
         if(!this.isReady){
             await wait(1000);
             if(!this.isReady){
@@ -39,7 +39,7 @@ class FoeRequest{
             channel.port1.onmessage = ({data}) => {
               channel.port1.close();
               if (data.error) rej(data.error);
-              else res( getResponseMethod(data.result, request[0]['requestMethod']) );
+              else res( raw ? data.result : getResponseMethod(data.result, request[0]['requestMethod']) );
             };
             window.postMessage({
                 type:"PageFetch", 

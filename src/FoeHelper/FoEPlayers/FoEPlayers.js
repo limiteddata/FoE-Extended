@@ -7,23 +7,23 @@ class FoePlayers extends EventEmitter{
     constructor(){
         super();
     }
-    async getFriendsList(self=false){
+    async getFriendsList(){
         const request = requestJSON("OtherPlayerService","getFriendsList");
-        let response = await FoERequest.FetchRequestAsync(request,0);
-        if(self!==true) response = response.filter(player=>player.is_self === false) 
-        return response
+        const response = await FoERequest.FetchRequestAsync(request,0);
+        return response;
     }
-    async getClanMemberList(self=false){
+    async getClanMemberList(){
         const request = requestJSON("OtherPlayerService","getClanMemberList");
-        let response = await FoERequest.FetchRequestAsync(request,0);
-        if(self!==true) response = response.filter(player=>player.is_self === false)
-        return response
+        const response = await FoERequest.FetchRequestAsync(request,0);
+        return response;
     }
-    async getNeighborList(self=false){
+    async getNeighborList(is_self=false,is_friend=false,is_guild_member=false){
         const request = requestJSON("OtherPlayerService","getNeighborList");
         let response = await FoERequest.FetchRequestAsync(request,0);
-        if(self!==true) response = response.filter(player=>player.is_self === false) 
-        return response
+        return response.filter(player=>
+            player.is_self === is_self && 
+            player.is_friend === is_friend && 
+            player.is_guild_member === is_guild_member) 
     }
     async getTavernSeats(){   
         const request = requestJSON("FriendsTavernService","getOwnTavern");

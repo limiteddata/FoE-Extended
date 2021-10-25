@@ -7,7 +7,7 @@ import Checkbox from '../../Checkbox/Checkbox';
 import Input from '../../Input/Input';
 
 import CityBuilding from '../../CityBuilding/CityBuilding';
-import PlunderButton from './PlunderButton';
+import StealButton from '../../StealButton/StealButton';
 
 const windowstyle = {
     width: 615,
@@ -23,13 +23,13 @@ export default function PlunderWindow({open,setOpen}) {
                 <CityBuilding name={building.cityentity_id}/>,
                 building.cityentity_id.split('_')[2], 
                 `${building.fp} FP`, 
-                <PlunderButton
+                <StealButton
                     onClick={()=>FoEPlunder.plunderBuilding(building.player_id, building.building_id)}/>
             ]
     })}
     const [data, setData] = useState(modifiedBuilding(FoEPlunder.plunderableBuildings))
     const [totalFP, settotalFP] = useState(0)
-    const header = ['ID', 'Player', 'Building', 'Name', `Forge Points (Total ${totalFP} FP)`, 'Action'];
+    const header = ['ID', 'Player', 'Building', 'Name', `FPoints (Total ${totalFP} FP)`, 'Action'];
     useEffect(() => {
         const updateData = (e)=>{      
             setData(modifiedBuilding(e))
