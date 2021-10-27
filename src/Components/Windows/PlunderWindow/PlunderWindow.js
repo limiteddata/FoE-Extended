@@ -1,11 +1,10 @@
 import React, { useEffect,useState } from 'react';
 import ModalWindow from '../../ModalWindow/ModalWindow';
-import './PlunderWindow.scss';
 import ListView from '../../ListView/ListView'
 import { FoEPlunder } from '../../../FoeHelper/FoePlunder/FoePlunder';
 import Checkbox from '../../Checkbox/Checkbox';
 import Input from '../../Input/Input';
-
+import { toast } from 'react-toastify';
 import CityBuilding from '../../CityBuilding/CityBuilding';
 import StealButton from '../../StealButton/StealButton';
 
@@ -29,28 +28,42 @@ export default function PlunderWindow({open,setOpen}) {
     })}
     const [data, setData] = useState(modifiedBuilding(FoEPlunder.plunderableBuildings))
     const [totalFP, settotalFP] = useState(0)
-    const header = ['ID', 'Player', 'Building', 'Name', `FPoints (Total ${totalFP} FP)`, 'Action'];
+    const header = ['ID', 'Player', 'Building', 'Name', `FP (Total ${totalFP} FP)`, 'Action'];
     useEffect(() => {
         const updateData = (e)=>{      
             setData(modifiedBuilding(e))
             settotalFP(e.reduce((accumulator, currentValue)=>accumulator+currentValue.fp,0));
         }
         FoEPlunder.on('buildingsChanged',updateData);
-        FoEPlunder.checkSabotage();
+        toast.promise(
+            FoEPlunder.checkPlunder(),
+            {
+              pending: 'Checking plunder...',
+              success: 'Finished checking plunder.',
+              error: 'Error while checking plunder.'
+            })
         return () => {
             FoEPlunder.off('buildingsChanged',updateData);
         }
     }, [])
     return(
         <ModalWindow title={'Plunder Menu'} windowstyle={windowstyle} openWindow={open} closeWindow={()=>setOpen(false)}>
-            <div className='row'>       
-                <div className='col'>
-                    <button onClick={()=>{
+            <div className='flexRow'>       
+                <div className='flexCol'>
+                    <button 
+                        className='orange-button'
+                        onClick={async ()=>{
                         settotalFP(0);
-                        FoEPlunder.checkSabotage()
-                    }}>Check Sabotage</button>
+                        await toast.promise(
+                            FoEPlunder.checkPlunder(),
+                            {
+                              pending: 'Checking plunder...',
+                              success: 'Finished checking plunder.',
+                              error: 'Error while checking plunder.'
+                            })
+                    }}>Check Plunder</button>
                 </div>
-                <div className='col'>
+                <div className='flexCol'>
                     <Checkbox label={'Auto plunder'}                        
                         onChanged={(e)=> FoEPlunder.autoPlunder = e}
                         checked={FoEPlunder.autoPlunder}/>
@@ -58,7 +71,7 @@ export default function PlunderWindow({open,setOpen}) {
                         onChanged={(e)=> FoEPlunder.autoCheckPlunder = e}
                         checked={FoEPlunder.autoCheckPlunder}/>            
                 </div>
-                <div className='col'>
+                <div className='flexCol'>
                     <Input label={'Min plunder'} min={1}
                         value={FoEPlunder.plunderMinAmount} 
                         onChange={(e)=>FoEPlunder.plunderMinAmount = e}/>

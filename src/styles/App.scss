@@ -23,27 +23,14 @@
   background: #8591a5;
   border-radius: 3px;
 }
-
-button {
-  min-width: 80px;
-  max-width: 130px;
-  min-height: 23px;
-  width: 120px;
-  padding: 8px 4px 8px 4px;
-  font-size: 10pt;
-  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/largeMenuUp.png');
-  background-size: 100% 100%;
-  background-color: Transparent;
-  background-repeat: no-repeat;
-  border: none;
-  overflow: hidden;
-  outline: none;
-  margin: 5px 5px 5px 0px;
-  text-align: center;
+.flexRow {
   @include flexAllcenter;
-  font-weight: 600;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
-
-button:hover {
-  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/largeMenuOver.png');
+.flexCol {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-end;
 }

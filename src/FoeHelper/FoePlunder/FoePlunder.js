@@ -4,6 +4,7 @@ import { FoEPlayers } from "../FoEPlayers/FoEPlayers";
 import { requestJSON } from "../Utils";
 import { hasDeepValue } from "has-deep-value";
 import { notPlunderableIDs } from "./NotPlunderableBuildings";
+import { toast } from 'react-toastify';
 
 const EventEmitter = require("events");
 
@@ -118,15 +119,18 @@ class FoePlunder extends EventEmitter{
         if(response["result"]){
             FoEconsole.log(`Plunder ${response.result}`)
             if(response.result === "success"){
+                toast.success(`Plunder success\nreward: ${JSON.stringify(response.product.product.resources.strategy_points)} FP`)
                 FoEconsole.log(`reward: ${JSON.stringify(response.product.product.resources)}`)
                 return response.product.product.resources.strategy_points;
             }
-            else return 0;
+            toast.warning(`Plunder repelled`)
+            return 0;
         }
         FoEconsole.log(`Plunder failed`)
+        toast.error(`Plunder failed`)
         return 0;
     }
-    async checkSabotage(){
+    async checkPlunder(){
         FoEconsole.log(`Checking buildings to sabotage...`);
         this.plunderableBuildings=[];
         const neighbors = await FoEPlayers.getNeighborList();

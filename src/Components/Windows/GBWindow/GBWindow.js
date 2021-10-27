@@ -4,14 +4,16 @@ import './GBWindow.scss';
 import ListView from '../../ListView/ListView'
 import { FoEGB } from '../../../FoeHelper/FoeGB/FoeGB';
 import Input from '../../Input/Input';
-
+import Checkbox from '../../Checkbox/Checkbox'
 import GBuilding from './GBuilding';
 import StealButton from '../../StealButton/StealButton';
+import { toast } from 'react-toastify';
 
 const windowstyle = {
     width: 615,
     height: 385,
 }
+
 
 export default function GBWindow({open,setOpen}) {  
 
@@ -36,7 +38,7 @@ export default function GBWindow({open,setOpen}) {
 
     const [data, setData] = useState(modifiedBuilding(FoEGB.foundBuildings))
     const [totalFP, settotalFP] = useState(0)
-    const header = ['ID', 'Player', 'Building', 'Level','Rank', 'FP',`Profit(${totalFP} FP)`, 'Action'];
+    const header = ['Rank', 'Player', 'Building', 'Level','Rank', 'FP',`Profit(${totalFP} FP)`, 'Action'];
 
     useEffect(() => {
         const updateData = (e)=>{      
@@ -53,30 +55,39 @@ export default function GBWindow({open,setOpen}) {
         <ModalWindow title={'GB Menu'} windowstyle={windowstyle} openWindow={open} closeWindow={()=>setOpen(false)}>
             <div className='row'>       
                 <div className='col'>
-                    <button onClick={()=>{
-                        FoEGB.checkForNeighborGB()
-                    }}>Check Neighbors</button>
-                    <button onClick={()=>{
-                        FoEGB.checkForGuildGB()
-                    }}>Check Guild</button>
+                    <Checkbox label={'Include guild/friends'}
+                        onChanged={(e)=> FoEGB.includeFriends = e}
+                        checked={FoEGB.includeFriends}/>
+                    <button 
+                        className='orange-button'
+                        onClick={async ()=> {
+                        await toast.promise(
+                            FoEGB.checkForGBRanks(),
+                            {
+                              pending: 'Checking GB ranks...',
+                              success: 'Finished checking GB ranks.',
+                              error: 'Error while checking GB ranks.'
+                            }
+                        )}}>Check Neighbors</button>
                 </div>
                 <div className='col'>
-                    <Input label={'Ignore players'}
-                        type={'text'}
-                        placeholder={'playername, ...'}
-                        value={FoEGB.ignorePlayers} 
-                        onChange={(e)=> FoEGB.ignorePlayers = e}/>   
                     <Input label={'Arc bonus'}
                         min={1}
                         type={'Number'}
                         value={FoEGB.arcBonus} 
                         onChange={(e)=> FoEGB.arcBonus = e}/>   
-                </div>
-                <div className='col'>
                     <Input label={'Min profit'} min={1}
                         type={'number'}
                         value={ FoEGB.minProfit } 
                         onChange={(e)=> FoEGB.minProfit = e}/>
+                </div>
+                <div className='col'>
+                    <Input label={'Ignore players'}
+                        style={{width:92}}
+                        type={'text'}
+                        placeholder={'playername, ...'}
+                        value={FoEGB.ignorePlayers} 
+                        onChange={(e)=> FoEGB.ignorePlayers = e}/>   
                     <Input label={'Min return profit(%)'} 
                         min={1}
                         type={'number'}

@@ -3,7 +3,20 @@ import ModalWindow from '../../ModalWindow/ModalWindow';
 
 import { requestJSON } from '../../../FoeHelper/Utils';
 import { FoERequest } from '../../../FoeHelper/FoeRequest';
+
+import { toast } from 'react-toastify';
+
+
 export default function Window4({open,setOpen}) {
+    const notify = () => toast('🦄 Wow so easy!', {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: false,
+            progress: undefined,
+        });
 
     return(
         <ModalWindow
@@ -15,13 +28,21 @@ export default function Window4({open,setOpen}) {
             settings={()=>alert('open settings window')}
             openWindow={open}
             closeWindow={()=>setOpen(false)}>
-
-            <button onClick={async ()=>{
-                const request = requestJSON("OtherPlayerService","getFriendsList");
-                let response = await FoERequest.FetchRequestAsync(request,0);
-                console.log(response)
-            }}>test</button>
-
+            <button onClick={()=>{
+                const getTest = new Promise((res,err)=>{
+                    console.log('caca')
+                    res();
+                }).then();
+                toast.promise(
+                    getTest,
+                    {
+                      pending: 'Promise is pending',
+                      success: 'Promise resolved 👌',
+                      error: 'Promise rejected 🤯'
+                    }
+                )
+            }}>Notify!</button>
+            
         </ModalWindow>
     )
 }

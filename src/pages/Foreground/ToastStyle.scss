@@ -1,0 +1,9 @@
+@import '../../styles/components';
+
+.Toastify__toast-container--top-right {
+  top: 6em;
+  right: 6em;
+}
+.Toastify__toast-theme--dark {
+  @include WoodBackground;
+}

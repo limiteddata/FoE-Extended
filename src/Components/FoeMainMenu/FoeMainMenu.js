@@ -4,11 +4,11 @@ import '../../styles/App.scss'
 import MainMenu from '../../Components/MainMenu/MainMenu';
 import MenuItem from '../../Components/MainMenu/MenuItem';
 import ArmyWindow from '../../Components/Windows/ArmyWindow/ArmyWindow';
-import Window4 from '../../Components/Windows/Window4/Window4';
 import ConsoleWindow from '../../Components/Windows/ConsoleWindow/ConsoleWindow';
 import MotivateWindow from '../../Components/Windows/MotivateWindow/MotivateWindow';
 import PlunderWindow from '../../Components/Windows/PlunderWindow/PlunderWindow';
 import GBWindow from '../Windows/GBWindow/GBWindow';
+import AttackWindow from '../Windows/AttackWindow/AttackWindow';
 
 const armyicon = urlResolver.resolve('/src/assets/img/icon_armyManagement.png')
 const terminal = urlResolver.resolve('/src/assets/img/terminal.png')
@@ -41,9 +41,9 @@ export default function FoeMainMenu() {
                 icon={gb}
                 component={<GBWindow/>}/>    
             <MenuItem
-                name={'Untitled Menu'}
+                name={'Attack Menu'}
                 icon={attack}
-                component={<Window4/>}/>    
+                component={<AttackWindow/>}/>    
         </MainMenu> 
     )
 }

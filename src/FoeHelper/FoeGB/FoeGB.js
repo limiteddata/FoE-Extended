@@ -3,6 +3,7 @@ import { FoERequest } from "../FoeRequest";
 import { FoEPlayers } from "../FoEPlayers/FoEPlayers";
 import { requestJSON } from "../Utils";
 import { getResponseMethod } from "../Utils";
+import { toast } from 'react-toastify';
 
 const EventEmitter = require("events");
 
@@ -98,7 +99,14 @@ class FoeGB extends EventEmitter{
             return true;
         })
         const request = requestJSON("GreatBuildingsService","contributeForgePoints",[buildingId,playerId,buildingLvl,fp,false]);
-        const response = await FoERequest.FetchRequestAsync(request,100);   
+
+        const response = await toast.promise(FoERequest.FetchRequestAsync(request,100),
+        {
+            pending: 'Contributing to building...',
+            success: `Succesfuly contributed ${fp} FP.`,
+            error: 'Error contributing to building.'
+        })
+
         FoEconsole.log(`Placed ${fp} FP to ${buildingId} from ${playerId}`);
         return response;
     }
@@ -167,15 +175,16 @@ class FoeGB extends EventEmitter{
         FoEconsole.log('Finished scanning buildings');
     }
 
-    async checkForNeighborGB(){
-        const neighbors = await FoEPlayers.getNeighborList(false, this.includeFriends, false);
-        await this.CheckBuildings(neighbors);
-    }
-
-    async checkForGuildGB(){
-        FoEconsole.log('Scanning Guild');
-        const clanmembers = await FoEPlayers.getClanMemberList();
-        await this.CheckBuildings(clanmembers);
+    async checkForGBRanks(){
+        FoEconsole.log('Scanning GB ranks to steal');
+        const neighbors = await FoEPlayers.getNeighborList();
+        let players = neighbors;
+        if(this.includeFriends){
+            const clanmembers = await FoEPlayers.getClanMemberList();
+            const friends = await FoEPlayers.getFriendsList();
+            players = [...players, ...clanmembers, ...friends];
+        }
+        await this.CheckBuildings(players);
     }
 }
 

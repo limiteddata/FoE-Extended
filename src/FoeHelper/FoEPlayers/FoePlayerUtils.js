@@ -2,6 +2,8 @@ import { FoEconsole } from "../Foeconsole/Foeconsole";
 import { FoERequest } from "../FoeRequest";
 import { FoEPlayers } from "./FoEPlayers";
 import { requestJSON } from "../Utils";
+import { toast } from 'react-toastify';
+
 const EventEmitter = require("events");
 
 class FoePlayerUtils extends EventEmitter{  
@@ -13,31 +15,54 @@ class FoePlayerUtils extends EventEmitter{
             if(player['next_interaction_in'] || player['accepted'] === false) continue;
             FoEconsole.log(`Motivating player: ${player.name}`);
             const request = requestJSON("OtherPlayerService","polivateRandomBuilding",[player.player_id]);
-            await FoERequest.FetchRequestAsync(request)
+            await FoERequest.FetchRequestAsync(request,400)
         }   
         FoEconsole.log(`Finished motivating players.`);
     }
     async MotivateClanMembers(){
         FoEconsole.log(`Started motivating clan members.`);
-        await this.MotivatePlayers(await FoEPlayers.getClanMemberList());
+        await toast.promise(this.MotivatePlayers(await FoEPlayers.getClanMemberList()),
+        {
+            pending: 'Motivating clan members...',
+            success: 'Finished motivating clan members.',
+            error: 'Error while motivating clan members.'
+        })
     }
     async MotivateFriends(){
         FoEconsole.log(`Started motivating friends.`);
-        await this.MotivatePlayers(await FoEPlayers.getFriendsList());
+        await toast.promise(this.MotivatePlayers(await FoEPlayers.getFriendsList()),
+            {
+                pending: 'Motivating friends...',
+                success: 'Finished motivating friends.',
+                error: 'Error while motivating friends.'
+            })
     }
     async MotivateNeighbors(){
-        FoEconsole.log(`Started motivating neighbor.`);
-        await this.MotivatePlayers(await FoEPlayers.getNeighborList());
+        FoEconsole.log(`Started motivating neighbors.`);
+        await toast.promise(this.MotivatePlayers(await FoEPlayers.getNeighborList()),
+        {
+            pending: 'Motivating neighbors...',
+            success: 'Finished motivating neighbors.',
+            error: 'Error while motivating neighbors.'
+        })
     }
     async CollectTavern(){
         FoEconsole.log("Collecting tavern");
         const tavernSeats = await FoEPlayers.getTavernSeats();
         if(tavernSeats["unlockedChairs"] !== tavernSeats["occupiedSeats"]) {
             FoEconsole.log("Tavern is not fully occupied yet");
+            toast('Tavern is not fully occupied yet',{autoClose: 2000});
             return;
         }
-        const request = requestJSON("FriendsTavernService","requestMethod");
-        await FoERequest.FetchRequestAsync(request,0);
+        const request = requestJSON("FriendsTavernService","collectReward");
+
+        await toast.promise(FoERequest.FetchRequestAsync(request,0),
+        {
+            pending: 'Collecting tavern...',
+            success: 'Tavern collected.',
+            error: 'Error while collecting tavern.'
+        })
+
         FoEconsole.log("Tavern collected");
     }
     async seatToTavern(playerid){
@@ -52,8 +77,17 @@ class FoePlayerUtils extends EventEmitter{
     }
     async seatToAllTaverns(){
         FoEconsole.log(`Started seating to taverns.`);
-        const friendsList = await FoEPlayers.getFriendsList();
-        for(const player of friendsList) await this.seatToTavern(player.player_id)
+        await toast.promise(
+            new Promise(async (resolve,reject)=>{
+                const friendsList = await FoEPlayers.getFriendsList();
+                for(const player of friendsList) await this.seatToTavern(player.player_id)
+                resolve()
+            }),
+        {
+            pending: 'Seating to taverns...',
+            success: 'Finished seating to taverns.',
+            error: 'Error while seating to taverns.'
+        })
         FoEconsole.log(`Finished seating to taverns.`);
     }
     async removePlayer(player){   
@@ -63,11 +97,19 @@ class FoePlayerUtils extends EventEmitter{
     }
     async removeInactivePlayers(){   
         FoEconsole.log(`Started removing inactive players`);
-        let playerList = await FoEPlayers.getFriendsList();
-        for(const player of playerList){
-            if (player.is_active === false) 
-                await this.removePlayer(player)
-        }
+        await toast.promise(
+            new Promise(async (resolve,reject)=>{
+                let playerList = await FoEPlayers.getFriendsList();
+                for(const player of playerList){
+                    if (player.is_active === false) 
+                        await this.removePlayer(player)
+                }
+                resolve();
+            }),
+            {
+            pending: 'Removing inactive friends...',
+            success: 'Finished removing friends.',
+            error: 'Error while removing friends.'})
         FoEconsole.log('Done')    
     }
 }

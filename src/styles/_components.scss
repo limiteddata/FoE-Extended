@@ -6,7 +6,31 @@
   background-image: url('https://foero.innogamescdn.com/assets/shared/gui/window/wood_background.jpg');
   background-repeat: repeat;
 }
+.orange-button {
+  min-width: 80px;
+  max-width: 130px;
+  min-height: 23px;
+  width: 120px;
+  padding: 8px 4px 8px 4px;
+  font-size: 10pt;
+  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/largeMenuUp.png');
+  background-size: 100% 100%;
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: none;
+  overflow: hidden;
+  outline: none;
+  margin: 5px 5px 5px 0px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+}
 
+.orange-button:hover {
+  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/largeMenuOver.png');
+}
 .close-button {
   background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/closeUp.png');
 }

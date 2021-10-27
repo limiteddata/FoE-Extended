@@ -105,12 +105,12 @@ class ArmyManagement extends EventEmitter{
         });
     }
 
-    setNewArmy = async (setArmy) => {
+    setNewArmy = async (army) => {
+        await this.updateArmy()
         let attackIDs = [];
-        const attackarm = setArmy?setArmy:this.attackArmy;
         const defendingIDs = this.ArmyPool.defendingArmy.map(unit => unit.unitId);
         const arena_defendingIDs = this.ArmyPool.arenaDefending.map(unit => unit.unitId);
-        attackarm.forEach(unit => {
+        army.forEach(unit => {
             for (let i = 0; i < this.ArmyPool.unassignedArmy.length; i++) {
                 if (this.ArmyPool.unassignedArmy[i]["unitTypeId"] === unit.unitTypeId &&
                     this.ArmyPool.unassignedArmy[i]["currentHitpoints"] === 10 && !attackIDs.includes(this.ArmyPool.unassignedArmy[i]["unitId"])) {
@@ -129,6 +129,20 @@ class ArmyManagement extends EventEmitter{
         const request = requestJSON("ArmyUnitManagementService","updatePools",requestData);
         await FoERequest.FetchRequestAsync(request, 0);
         FoEconsole.log('New army set');
+    }
+    async setNewAttackArmy(index){
+        if(!this.attackArmy[index]) {
+            FoEconsole.log(`Attack army not set`)
+            return -1;
+        }
+        await this.setNewArmy(this.attackArmy[index]);
+    }
+    async setNewGVGArmy(index){
+        if(!this.attackArmy[index]) {
+            FoEconsole.log(`GVG army not set`)
+            return -1;
+        }
+        await this.setNewArmy(this.gvgArmy[index]);
     }
 }
 
