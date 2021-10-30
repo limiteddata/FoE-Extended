@@ -119,7 +119,7 @@ class FoeGB extends EventEmitter{
 
     async getGBranks(buildingId,playerId){
         const request = requestJSON("GreatBuildingsService","getConstruction",[buildingId,playerId]);
-        const response = await FoERequest.FetchRequestAsync(request,200,true);
+        const response = await FoERequest.FetchRequestAsync(request,{raw:true});
         const entitiy = getResponseMethod(response, "updateEntity")[0];
         if(entitiy.connected){
             const construction = getResponseMethod(response, "getConstruction");

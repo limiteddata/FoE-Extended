@@ -46,6 +46,7 @@ class ArmyManagement extends EventEmitter{
         new Promise(async (res,err)=>{
             this.armyTypes = await this.getArmyType();
             FoEProxy.addHandler('getArmyInfo', this.__sortArmy) 
+            this.updateArmy();
             res();
         }).then();
     }
@@ -98,27 +99,29 @@ class ArmyManagement extends EventEmitter{
 
     getArmyType = async () => {
         const request = requestJSON("ArmyUnitManagementService","getUnitTypes");
-        return await FoERequest.FetchRequestAsync(request,0).then(types=>{
+        return await FoERequest.FetchRequestAsync(request,{delay:0}).then(types=>{
             let convertedTypes = {};
             types.forEach(e => convertedTypes[e.unitTypeId] = e);
             return convertedTypes;
         });
     }
 
-    setNewArmy = async (army,delay) => {
-        await this.updateArmy()
+    setNewArmy = async (army) => {
+        await this.updateArmy();
         let attackIDs = [];
         const defendingIDs = this.ArmyPool.defendingArmy.map(unit => unit.unitId);
         const arena_defendingIDs = this.ArmyPool.arenaDefending.map(unit => unit.unitId);
         army.forEach(unit => {
             for (let i = 0; i < this.ArmyPool.unassignedArmy.length; i++) {
                 if (this.ArmyPool.unassignedArmy[i]["unitTypeId"] === unit.unitTypeId &&
-                    this.ArmyPool.unassignedArmy[i]["currentHitpoints"] === 10 && !attackIDs.includes(this.ArmyPool.unassignedArmy[i]["unitId"])) {
+                    this.ArmyPool.unassignedArmy[i]["currentHitpoints"] === 10 && 
+                    !attackIDs.includes(this.ArmyPool.unassignedArmy[i]["unitId"])) {
                     attackIDs.push(this.ArmyPool.unassignedArmy[i]["unitId"]);
                     break;
                 }
             }
         });
+        if(army.length !== attackIDs.length) throw('Not enough troups');
         const requestData = [
             [   
                 { "__class__": "ArmyPool", "units": [...attackIDs], "type": "attacking" }, 
@@ -131,18 +134,12 @@ class ArmyManagement extends EventEmitter{
         FoEconsole.log('New army set');
     }
     async setNewAttackArmy(index){
-        if(!this.attackArmy[index]) {
-            FoEconsole.log(`Attack army not set`)
-            return -1;
-        }
+        if(!this.attackArmy[index]) throw (`Attack army not set`);
         await this.setNewArmy(this.attackArmy[index]);
     }
     async setNewGVGArmy(index){
-        if(!this.attackArmy[index]) {
-            FoEconsole.log(`GVG army not set`)
-            return -1;
-        }
-        await this.setNewArmy(this.gvgArmy[index],0);
+        if(!this.gvgArmy[index]) throw (`GVG army not set`);
+        await this.setNewArmy(this.gvgArmy[index]);
     }
 }
 

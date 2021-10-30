@@ -15,7 +15,7 @@ class FoePlayerUtils extends EventEmitter{
             if(player['next_interaction_in'] || player['accepted'] === false) continue;
             FoEconsole.log(`Motivating player: ${player.name}`);
             const request = requestJSON("OtherPlayerService","polivateRandomBuilding",[player.player_id]);
-            await FoERequest.FetchRequestAsync(request,600)
+            await FoERequest.FetchRequestAsync(request)
         }   
         FoEconsole.log(`Finished motivating players.`);
     }

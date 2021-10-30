@@ -6,10 +6,8 @@ const EventEmitter = require("events");
 class FoePlayers extends EventEmitter{  
     currentPlayer;
     protectedPlayers;
-    playerResources;
     constructor(){
         super();
-        FoEProxy.addHandler('getPlayerResources',(e)=> this.playerResources = e.resources)
         FoEProxy.addHandler('getData',(e)=> this.currentPlayer = e.user_data)
         FoEProxy.addHandler('getCityProtections',(e)=> this.protectedPlayers = e.map(player=>player.playerId))
     }

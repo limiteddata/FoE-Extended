@@ -1,16 +1,16 @@
 import { FoEconsole } from "../Foeconsole/Foeconsole";
 import { FoERequest } from "../FoeRequest";
 import { armyManagement } from "../ArmyManagement/ArmyManagement";
-import { requestJSON } from "../Utils";
+import { requestJSON, wait } from "../Utils";
 import { FoEPlayers } from '../FoEPlayers/FoEPlayers';
-import { getResponseMethod } from "../Utils";
 import { toast } from "react-toastify";
 import { FoEAttack } from "./FoeAttack";
-
+import { FoEProxy } from "../FoeProxy";
 const EventEmitter = require("events");
 
 class FoeAutoExp extends EventEmitter{  
     #autoExpedition=false;
+    #checking=false;
     get autoExpedition(){
         return this.#autoExpedition;
     }
@@ -18,14 +18,18 @@ class FoeAutoExp extends EventEmitter{
         if(this.#autoExpedition === e) return;
         this.#autoExpedition = e;
         localStorage.setItem('autoExpedition', JSON.stringify(e));
-        if(e) setTimeout(()=>this.checkExpedition(),1000); 
+        if(e) this.checkExpedition();
     }
 
     constructor(){
         super();    
         const loadedautoExpedition = localStorage.getItem('autoExpedition');
         if(loadedautoExpedition && loadedautoExpedition != 'null')
-            this.autoExpedition = JSON.parse(loadedautoExpedition);        
+            this.autoExpedition = JSON.parse(loadedautoExpedition);    
+              
+        FoEProxy.addHandler('getPlayerResources', (e)=> {
+            if(e.resources.guild_expedition_attempt>0 && this.autoExpedition) this.checkExpedition();
+        })  
     }
     async checkifMapUnlocked(currentMap){
         const request = requestJSON("GuildExpeditionService","getDifficulties")  
@@ -55,22 +59,20 @@ class FoeAutoExp extends EventEmitter{
             await FoERequest.FetchRequestAsync(request);
         })
     }
-    async checkExpedition(){
-        const attempts = FoEPlayers.playerResources.guild_expedition_attempt; 
-        if(attempts === 0){  
-            FoEconsole.log('Not enough attempts');
-            return;
-        }
-        FoEconsole.log("Starting to attack in expedition");    
-        let failedAttacks = 0;   
-        while(attempts>0){
+    async loopExp(num){
+        let armyIndex = 0;   
+        for(let i=0; i<num; i++){
+            if(armyIndex > armyManagement.attackArmy.length-1) {
+                FoEconsole.log('Too many attack attempts');
+                return -1;
+            }
             let overview = await this.getExpeditionOverview();
             if(!overview['progress'].hasOwnProperty('currentEntityId')) overview['progress']['currentEntityId'] = 0;
             if(!overview['progress'].hasOwnProperty('difficulty')) overview['progress']['difficulty'] = 0;  
-            if(overview['progress']['isMapCompleted'] == true ){      
+            if(overview['progress']['isMapCompleted'] === true ){      
                 if (overview.progress.difficulty === 3){
                     FoEconsole.log(`Expedition finished`);   
-                    return;
+                    return -1;
                 }
                 if(await this.checkifMapUnlocked(overview.progress.difficulty)){
                     FoEconsole.log(`Map ${overview.progress.difficulty} compleated`);
@@ -79,9 +81,10 @@ class FoeAutoExp extends EventEmitter{
                     await FoERequest.FetchRequestAsync(request);
                     FoEconsole.log("Map changed");
                     overview = await this.getExpeditionOverview();
+                }else{
+                    FoEconsole.log(`Map ${overview.progress.difficulty+1} is not unlocked!`);
+                    return -1;
                 }
-                FoEconsole.log(`Map ${overview.progress.difficulty+1} is not unlocked!`);
-                return;
             }
 
             // first check if expedition needs to open chest
@@ -91,18 +94,55 @@ class FoeAutoExp extends EventEmitter{
                     break;
                 }
             }
-
+            await armyManagement.setNewAttackArmy(armyIndex);
             const attackResult = await FoEAttack.expeditionAttack(overview.progress.currentEntityId);
-            if(attackResult === 1) {
+            if(attackResult === -1) {
                 await this.openExpeditionChest(overview['progress']['currentEntityId']+1);
-                failedAttacks = 0;
+                armyIndex = 0;
             }
-            else failedAttacks++;
+            else {
+                armyIndex++;
+                FoEconsole.log('Switching army type')
+            }
             await this.colectAllRewards();
-            if(failedAttacks === 3) break;
         }
+    }
+    async checkExpedition(){
+        if(this.#checking===true) return;
+        this.#checking = true;
 
-        FoEconsole.log('Used all attempts');
+        await toast.promise(
+            new Promise(async (resolve,reject)=>{
+                try {
+                    FoEconsole.log("Starting to attack in expedition");    
+                    let attempts = (await FoEPlayers.getResources()).guild_expedition_attempt; 
+                    if(attempts === 0){  
+                        FoEconsole.log('Not enough attempts');
+                        resolve('Not enough attempts');
+                    }
+                    while(attempts>0){
+                        if(await this.loopExp(attempts) === -1) resolve('Used all attempts');
+                        attempts = (await FoEPlayers.getResources()).guild_expedition_attempt; 
+                    }
+                    this.#checking = false;
+                    FoEconsole.log('Used all attempts');
+                    resolve('Finished solving expedition');
+                } catch (error) {
+                    reject(error);
+            }}),
+            {
+                pending: 'Solving guild expedition...',
+                success: {
+                    render({data}){
+                        return `${data}`;
+                    }
+                },
+                error: {
+                render({data}){
+                    return `${data}`
+                }
+            }
+        })   
     }
     
 }

@@ -15,33 +15,29 @@ class FoeAttack extends EventEmitter{
     }
 
     async NewAttack(attackOptions){
-        if( await armyManagement.setNewAttackArmy(0) === -1) {
-            throw 'Army not set';
-        }
-
         FoEconsole.log("New Attack");
         const request = requestJSON("BattlefieldService","startByBattleType",[attackOptions,true]);
-        let response = await FoERequest.FetchRequestAsync(request,200,true);
+        let response = await FoERequest.FetchRequestAsync(request,{raw:true});
         let battleResponse = getResponseMethod(response,"startByBattleType")
 
         if(battleResponse.state.winnerBit === 1){
             FoEconsole.log("Won first battle");  
             if(battleResponse.battleType.totalWaves === 2){
-                response = await FoERequest.FetchRequestAsync(request,200,true);
+                response = await FoERequest.FetchRequestAsync(request,{raw:true});
                 battleResponse = getResponseMethod(response,"startByBattleType")
                 if(battleResponse.state.winnerBit === 1) FoEconsole.log("Won seccond battle");
                 else{
                     FoEconsole.log("Lost seccond battle");     
-                    return -1;
+                    return 1;
                 }
             }
             const rewards = getResponseMethod(response,"collectReward");
             if(rewards) 
                 for (const reward of rewards[0]) FoEconsole.log(`Reward ${reward.name}`)
-            return 1;
+            return -1;
         }
         FoEconsole.log("Lost first battle");
-        return -1;
+        return 1;
     }
     async pvpAttack(attacker,deffender){
         const attackOption = {

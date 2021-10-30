@@ -2,6 +2,7 @@ import md5 from 'md5';
 import { wait, getResponseMethod } from './Utils';
 
 class FoeRequest{
+    
     gameOptions = {
         secret: null,
         version: null,
@@ -24,13 +25,10 @@ class FoeRequest{
         return md5(data).toString(16).slice(0, 10);
     }
 
-    FetchRequestAsync = async (request, delay=250, raw=false)=>{
+    FetchRequestAsync = async (request, {delay=700, raw=false}={})=>{
         if(!this.isReady){
             await wait(1000);
-            if(!this.isReady){
-                console.log('Extension is not ready!')
-                return null;
-            }
+            if(!this.isReady) throw 'Extension is not ready!';
         }
         if(delay !== 0) await wait(delay);
         request.forEach(element => element["requestId"] = this.gameOptions.requestId++  ); 
