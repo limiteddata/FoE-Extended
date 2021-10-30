@@ -15,19 +15,19 @@ class FoePlayers extends EventEmitter{
     }
     async getFriendsList(){
         const request = requestJSON("OtherPlayerService","getFriendsList");
-        const response = await FoERequest.FetchRequestAsync(request,0);
+        const response = await FoERequest.FetchRequestAsync(request);
         return response.filter(player=>
             player.is_self === false &&
             player.is_guild_member === false);
     }
     async getClanMemberList(){
         const request = requestJSON("OtherPlayerService","getClanMemberList");
-        const response = await FoERequest.FetchRequestAsync(request,0);
+        const response = await FoERequest.FetchRequestAsync(request);
         return response.filter(player=> player.is_self === false);
     }
     async getNeighborList(){
         const request = requestJSON("OtherPlayerService","getNeighborList");
-        let response = await FoERequest.FetchRequestAsync(request,0);
+        let response = await FoERequest.FetchRequestAsync(request);
         return response.filter(player=>
             player.is_self === false && 
             player.is_friend === false && 
@@ -35,20 +35,20 @@ class FoePlayers extends EventEmitter{
     }
     async getTavernSeats(){   
         const request = requestJSON("FriendsTavernService","getOwnTavern");
-        const response = await FoERequest.FetchRequestAsync(request,0);
+        const response = await FoERequest.FetchRequestAsync(request);
 
-        const unlockedChairs = response["view"]["unlockedChairs"];
-        const occupiedSeats = response["view"]["visitors"].length;
+        const unlockedChairs = response.view.unlockedChairs;
+        const occupiedSeats = response.view.visitors.length;
 
         return {"unlockedChairs":unlockedChairs,"occupiedSeats":occupiedSeats};
     }
     async visitPlayerCity(playerId){   
         const request = requestJSON("OtherPlayerService","visitPlayer",[playerId])  
-        return await FoERequest.FetchRequestAsync(request,0);
+        return await FoERequest.FetchRequestAsync(request);
     }
     async getResources(){
         const request = requestJSON("ResourceService","getPlayerResources")  
-        return (await FoERequest.FetchRequestAsync(request,0))['resources'];
+        return (await FoERequest.FetchRequestAsync(request))['resources'];
     }
 }
 

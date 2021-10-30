@@ -93,7 +93,7 @@ class ArmyManagement extends EventEmitter{
     }
     getArmyInfo = async () => {
         const request = requestJSON("ArmyUnitManagementService","getArmyInfo",[{ "__class__": "ArmyContext", "content": "main" }]);
-        return await FoERequest.FetchRequestAsync(request,0);
+        return await FoERequest.FetchRequestAsync(request);
     }
 
     getArmyType = async () => {
@@ -105,7 +105,7 @@ class ArmyManagement extends EventEmitter{
         });
     }
 
-    setNewArmy = async (army) => {
+    setNewArmy = async (army,delay) => {
         await this.updateArmy()
         let attackIDs = [];
         const defendingIDs = this.ArmyPool.defendingArmy.map(unit => unit.unitId);
@@ -127,7 +127,7 @@ class ArmyManagement extends EventEmitter{
             ], { "__class__": "ArmyContext", "content": "main" }
         ];
         const request = requestJSON("ArmyUnitManagementService","updatePools",requestData);
-        await FoERequest.FetchRequestAsync(request, 0);
+        await FoERequest.FetchRequestAsync(request);
         FoEconsole.log('New army set');
     }
     async setNewAttackArmy(index){
@@ -142,7 +142,7 @@ class ArmyManagement extends EventEmitter{
             FoEconsole.log(`GVG army not set`)
             return -1;
         }
-        await this.setNewArmy(this.gvgArmy[index]);
+        await this.setNewArmy(this.gvgArmy[index],0);
     }
 }
 

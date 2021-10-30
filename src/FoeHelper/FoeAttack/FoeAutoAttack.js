@@ -24,10 +24,7 @@ class FoeAutoAttack extends EventEmitter{
             for (const neighbor of neighbors){
                 if(!neighbor.next_interaction_in && 
                     neighbor.canSabotage === false &&
-                    FoEPlayers.protectedPlayers.indexOf(neighbor.player_id) === -1){
-                    if( await armyManagement.setNewAttackArmy(0) === -1) break;
-                    await FoEAttack.pvpAttack(attacker,neighbor)
-                }
+                    FoEPlayers.protectedPlayers.indexOf(neighbor.player_id) === -1) await FoEAttack.pvpAttack(attacker,neighbor)
             }
             resolve();
         }),

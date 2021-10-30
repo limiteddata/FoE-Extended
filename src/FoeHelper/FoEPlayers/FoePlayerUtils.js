@@ -15,7 +15,7 @@ class FoePlayerUtils extends EventEmitter{
             if(player['next_interaction_in'] || player['accepted'] === false) continue;
             FoEconsole.log(`Motivating player: ${player.name}`);
             const request = requestJSON("OtherPlayerService","polivateRandomBuilding",[player.player_id]);
-            await FoERequest.FetchRequestAsync(request,400)
+            await FoERequest.FetchRequestAsync(request,600)
         }   
         FoEconsole.log(`Finished motivating players.`);
     }
@@ -56,7 +56,7 @@ class FoePlayerUtils extends EventEmitter{
         }
         const request = requestJSON("FriendsTavernService","collectReward");
 
-        await toast.promise(FoERequest.FetchRequestAsync(request,0),
+        await toast.promise(FoERequest.FetchRequestAsync(request),
         {
             pending: 'Collecting tavern...',
             success: 'Tavern collected.',
@@ -92,7 +92,7 @@ class FoePlayerUtils extends EventEmitter{
     }
     async removePlayer(player){   
         const request = requestJSON("FriendService","deleteFriend",[player.player_id]);
-        await FoERequest.FetchRequestAsync(request,0);
+        await FoERequest.FetchRequestAsync(request);
         FoEconsole.log(`Removed inactive player ${player.name}`);
     }
     async removeInactivePlayers(){   

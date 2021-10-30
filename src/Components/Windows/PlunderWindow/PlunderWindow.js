@@ -35,13 +35,6 @@ export default function PlunderWindow({open,setOpen}) {
             settotalFP(e.reduce((accumulator, currentValue)=>accumulator+currentValue.fp,0));
         }
         FoEPlunder.on('buildingsChanged',updateData);
-        toast.promise(
-            FoEPlunder.checkPlunder(),
-            {
-              pending: 'Checking plunder...',
-              success: 'Finished checking plunder.',
-              error: 'Error while checking plunder.'
-            })
         return () => {
             FoEPlunder.off('buildingsChanged',updateData);
         }
@@ -54,13 +47,7 @@ export default function PlunderWindow({open,setOpen}) {
                         className='orange-button'
                         onClick={async ()=>{
                         settotalFP(0);
-                        await toast.promise(
-                            FoEPlunder.checkPlunder(),
-                            {
-                              pending: 'Checking plunder...',
-                              success: 'Finished checking plunder.',
-                              error: 'Error while checking plunder.'
-                            })
+                        await FoEPlunder.checkPlunder();
                     }}>Check Plunder</button>
                 </div>
                 <div className='flexCol'>

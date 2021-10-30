@@ -115,7 +115,7 @@ class FoePlunder extends EventEmitter{
     async plunderBuilding(player_id,building_id){
         this.plunderableBuildings = this.plunderableBuildings.filter(e=> e.player_id !== player_id && e.building_id !== building_id)
         const request = requestJSON("OtherPlayerService","plunderById",[player_id, building_id]);
-        const response = await FoERequest.FetchRequestAsync(request,0);
+        const response = await FoERequest.FetchRequestAsync(request);
         if(response["result"]){
             FoEconsole.log(`Plunder ${response.result}`)
             if(response.result === "success"){
@@ -131,28 +131,36 @@ class FoePlunder extends EventEmitter{
         return 0;
     }
     async checkPlunder(){
-        FoEconsole.log(`Checking buildings to sabotage...`);
-        this.plunderableBuildings=[];
-        const neighbors = await FoEPlayers.getNeighborList();
-
-        for (const neighbor of neighbors){
-            if(neighbor.canSabotage !== true) continue;
-            const neighborCity = await FoEPlayers.visitPlayerCity(neighbor.player_id);
-            const bestBuilding = this.__getBestPlunderableBuilding(neighborCity['city_map']['entities'])
-            if(bestBuilding === null) continue;
-            const newBuilding = {
-                building_id: bestBuilding.id,
-                player_id: bestBuilding.player_id,
-                player_name: neighbor.name,
-                player_rank: neighbor.rank,
-                cityentity_id: bestBuilding.cityentity_id,
-                fp:bestBuilding.state.current_product.product.resources.strategy_points
+        await toast.promise(new Promise(async resp=>{
+            FoEconsole.log(`Checking buildings to sabotage...`);
+            this.plunderableBuildings=[];
+            const neighbors = await FoEPlayers.getNeighborList();
+    
+            for (const neighbor of neighbors){
+                if(neighbor.canSabotage !== true) continue;
+                const neighborCity = await FoEPlayers.visitPlayerCity(neighbor.player_id);
+                const bestBuilding = this.__getBestPlunderableBuilding(neighborCity['city_map']['entities'])
+                if(bestBuilding === null) continue;
+                const newBuilding = {
+                    building_id: bestBuilding.id,
+                    player_id: bestBuilding.player_id,
+                    player_name: neighbor.name,
+                    player_rank: neighbor.rank,
+                    cityentity_id: bestBuilding.cityentity_id,
+                    fp:bestBuilding.state.current_product.product.resources.strategy_points
+                }
+                FoEconsole.log(`\n\n${newBuilding.player_name} #${newBuilding.player_rank}\nBuilding: ${newBuilding.cityentity_id}(id:${newBuilding.building_id})  -->  ${newBuilding.fp}pf`) 
+                this.plunderableBuildings = [...this.plunderableBuildings,newBuilding];
+                if(this.autoPlunder) await this.plunderBuilding(newBuilding.player_id, newBuilding.building_id);
             }
-            FoEconsole.log(`\n\n${newBuilding.player_name} #${newBuilding.player_rank}\nBuilding: ${newBuilding.cityentity_id}(id:${newBuilding.building_id})  -->  ${newBuilding.fp}pf`) 
-            this.plunderableBuildings = [...this.plunderableBuildings,newBuilding];
-            if(this.autoPlunder) await this.plunderBuilding(newBuilding.player_id, newBuilding.building_id);
-        }
-        FoEconsole.log(`Finished checking sabotage`);
+            FoEconsole.log(`Finished checking sabotage`);
+            resp();
+        }),
+        {
+            pending: 'Checking plunder...',
+            success: 'Finished checking plunder.',
+            error: 'Error while checking plunder.'
+        })
     }
 }
 

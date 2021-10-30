@@ -24,7 +24,7 @@ class FoeRequest{
         return md5(data).toString(16).slice(0, 10);
     }
 
-    FetchRequestAsync = async (request, delay=400, raw=false)=>{
+    FetchRequestAsync = async (request, delay=250, raw=false)=>{
         if(!this.isReady){
             await wait(1000);
             if(!this.isReady){

@@ -14,26 +14,30 @@ class FoeAttack extends EventEmitter{
         super();            
     }
 
-    async NewAttack(attackOptions,delay){
+    async NewAttack(attackOptions){
+        if( await armyManagement.setNewAttackArmy(0) === -1) {
+            throw 'Army not set';
+        }
+
         FoEconsole.log("New Attack");
         const request = requestJSON("BattlefieldService","startByBattleType",[attackOptions,true]);
-        let response = await FoERequest.FetchRequestAsync(request,delay,true);
+        let response = await FoERequest.FetchRequestAsync(request,200,true);
         let battleResponse = getResponseMethod(response,"startByBattleType")
 
         if(battleResponse.state.winnerBit === 1){
             FoEconsole.log("Won first battle");  
             if(battleResponse.battleType.totalWaves === 2){
-                response = await FoERequest.FetchRequestAsync(request,0,true);
+                response = await FoERequest.FetchRequestAsync(request,200,true);
                 battleResponse = getResponseMethod(response,"startByBattleType")
                 if(battleResponse.state.winnerBit === 1) FoEconsole.log("Won seccond battle");
-                FoEconsole.log("Lost seccond battle");     
-                return -1;
+                else{
+                    FoEconsole.log("Lost seccond battle");     
+                    return -1;
+                }
             }
             const rewards = getResponseMethod(response,"collectReward");
-            if(rewards) {
-                console.log(rewards)
-                for (const reward of rewards) FoEconsole.log(`Reward ${reward.name}`)
-            }
+            if(rewards) 
+                for (const reward of rewards[0]) FoEconsole.log(`Reward ${reward.name}`)
             return 1;
         }
         FoEconsole.log("Lost first battle");
@@ -50,7 +54,7 @@ class FoeAttack extends EventEmitter{
             "totalWaves":0,
             "isRevenge":false
         }
-        const attackresponse = await this.NewAttack(attackOption,400);
+        const attackresponse = await this.NewAttack(attackOption);
         FoEconsole.log(`Attacked player ${deffender.name}`); 
         return attackresponse;
     }
@@ -66,7 +70,7 @@ class FoeAttack extends EventEmitter{
             "encounterId":encounterId,
             "armyId":0
         }
-        return await this.NewAttack(attackOption,400);
+        return await this.NewAttack(attackOption);
     }
     async gvgAttack(sectorId,againstSiege){
         const attackOption = {
@@ -82,7 +86,7 @@ class FoeAttack extends EventEmitter{
             "armyId":0,
             "againstSiege":againstSiege
         }
-        return await this.NewAttack(attackOption,400);
+        return await this.NewAttack(attackOption);
     }
     async gbgAttack(provinceId){
         const attackOption = {
@@ -96,7 +100,7 @@ class FoeAttack extends EventEmitter{
             "provinceId":provinceId,
             "battlesWon":0
         }
-        return await this.NewAttack(attackOption,400);
+        return await this.NewAttack(attackOption);
     }
 }
 

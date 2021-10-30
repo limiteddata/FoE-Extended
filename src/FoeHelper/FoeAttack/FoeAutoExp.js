@@ -18,7 +18,7 @@ class FoeAutoExp extends EventEmitter{
         if(this.#autoExpedition === e) return;
         this.#autoExpedition = e;
         localStorage.setItem('autoExpedition', JSON.stringify(e));
-        if(e) setTimeout(this.checkExpedition,1000); 
+        if(e) setTimeout(()=>this.checkExpedition(),1000); 
     }
 
     constructor(){
@@ -29,7 +29,7 @@ class FoeAutoExp extends EventEmitter{
     }
     async checkifMapUnlocked(currentMap){
         const request = requestJSON("GuildExpeditionService","getDifficulties")  
-        const response = await FoERequest.FetchRequestAsync(request,0);
+        const response = await FoERequest.FetchRequestAsync(request);
         for(const map of response){
             if (map.id === currentMap+1) 
                 return map.unlocked;
@@ -47,14 +47,22 @@ class FoeAutoExp extends EventEmitter{
         const response = await FoERequest.FetchRequestAsync(request);
         return response;
     }
-
+    async colectAllRewards(){
+        const request = requestJSON("HiddenRewardService","getOverview")  
+        const response = await FoERequest.FetchRequestAsync(request);
+        response.hiddenRewards.forEach(async reward=>{
+            const request = requestJSON("HiddenRewardService","collectReward",[reward.hiddenRewardId])  
+            await FoERequest.FetchRequestAsync(request);
+        })
+    }
     async checkExpedition(){
         const attempts = FoEPlayers.playerResources.guild_expedition_attempt; 
         if(attempts === 0){  
             FoEconsole.log('Not enough attempts');
             return;
         }
-        FoEconsole.log("Starting to attack in expedition");       
+        FoEconsole.log("Starting to attack in expedition");    
+        let failedAttacks = 0;   
         while(attempts>0){
             let overview = await this.getExpeditionOverview();
             if(!overview['progress'].hasOwnProperty('currentEntityId')) overview['progress']['currentEntityId'] = 0;
@@ -75,24 +83,25 @@ class FoeAutoExp extends EventEmitter{
                 FoEconsole.log(`Map ${overview.progress.difficulty+1} is not unlocked!`);
                 return;
             }
-            // from here 
 
-
-
-            
             // first check if expedition needs to open chest
-            for (let i = 0; i < overview['chests'].length; i++) {
-                if(overview['chests'][i]['id'] == overview['progress']['currentEntityId']){
-                    await openExpeditionChest(overview['progress']['currentEntityId']);
+            for (let i = 0; i < overview.chests.length; i++) {
+                if(overview.chests[i].id === overview.progress.currentEntityId){
+                    await this.openExpeditionChest(overview.progress.currentEntityId);
                     break;
                 }
             }
-            var result = await expedition_AttackSector(overview['progress']['currentEntityId']);
-            if(result == 0) await openExpeditionChest(overview['progress']['currentEntityId']+1);// open chest
-            else if(result == 1) return {'finished':false,'lost':1};
-            else if(result["noarmy"] == true) return {"noarmy":true};
-            this.colectAllRewards();
+
+            const attackResult = await FoEAttack.expeditionAttack(overview.progress.currentEntityId);
+            if(attackResult === 1) {
+                await this.openExpeditionChest(overview['progress']['currentEntityId']+1);
+                failedAttacks = 0;
+            }
+            else failedAttacks++;
+            await this.colectAllRewards();
+            if(failedAttacks === 3) break;
         }
+
         FoEconsole.log('Used all attempts');
     }
     

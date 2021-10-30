@@ -100,7 +100,7 @@ class FoeGB extends EventEmitter{
         })
         const request = requestJSON("GreatBuildingsService","contributeForgePoints",[buildingId,playerId,buildingLvl,fp,false]);
 
-        const response = await toast.promise(FoERequest.FetchRequestAsync(request,100),
+        const response = await toast.promise(FoERequest.FetchRequestAsync(request),
         {
             pending: 'Contributing to building...',
             success: `Succesfuly contributed ${fp} FP.`,
@@ -113,13 +113,13 @@ class FoeGB extends EventEmitter{
 
     async getOpenedGB(playerId){
         const request = requestJSON("GreatBuildingsService","getOtherPlayerOverview",[playerId]);
-        const response = await FoERequest.FetchRequestAsync(request,100);        
+        const response = await FoERequest.FetchRequestAsync(request);        
         return response.filter(building => building.current_progress && building.current_progress != 0);
     }
 
     async getGBranks(buildingId,playerId){
         const request = requestJSON("GreatBuildingsService","getConstruction",[buildingId,playerId]);
-        const response = await FoERequest.FetchRequestAsync(request,0,true);
+        const response = await FoERequest.FetchRequestAsync(request,200,true);
         const entitiy = getResponseMethod(response, "updateEntity")[0];
         if(entitiy.connected){
             const construction = getResponseMethod(response, "getConstruction");
