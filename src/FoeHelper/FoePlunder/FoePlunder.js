@@ -15,7 +15,7 @@ class FoePlunder extends EventEmitter{
     }
     set plunderMinAmount(e){
         if(this.#plunderMinAmount === e) return;
-        this.#plunderMinAmount = e;
+        this.#plunderMinAmount = Number(e);
         localStorage.setItem('plunderMinAmount', JSON.stringify(e));
     }
 
@@ -35,12 +35,8 @@ class FoePlunder extends EventEmitter{
     }
     set checkInterval(e){
         if(this.#checkInterval === e || e.constructor === Number()) return;
-        this.#checkInterval = e;
+        this.#checkInterval = Number(e);
         localStorage.setItem('checkInterval', JSON.stringify(e));
-        if(this.autoCheckPlunder && this.#timeoutInterval) {   
-            clearInterval(this.#timeoutInterval);
-            this.#timeoutInterval = setInterval(()=> this.checkSabotage(),e*60000)
-        }
     }
 
     #timeoutInterval;
@@ -52,7 +48,10 @@ class FoePlunder extends EventEmitter{
         if(this.#autoCheckPlunder === e || e.constructor === Number()) return;
         this.#autoCheckPlunder = e;
         localStorage.setItem('autoCheckPlunder', JSON.stringify(e));    
-        if(e) this.#timeoutInterval = setInterval(()=> this.checkSabotage(),this.checkInterval*60000)
+        if(e) {
+            this.checkPlunder();
+            this.#timeoutInterval = setInterval(()=>this.checkPlunder(),this.checkInterval*60000);
+        }
         else clearInterval(this.#timeoutInterval);
     }
 
@@ -112,10 +111,10 @@ class FoePlunder extends EventEmitter{
         return bestAvialableBuilding
     }
 
-    async plunderBuilding(player_id,building_id){
+    async plunderBuilding(player_id,building_id){            
         this.plunderableBuildings = this.plunderableBuildings.filter(e=> e.player_id !== player_id && e.building_id !== building_id)
         const request = requestJSON("OtherPlayerService","plunderById",[player_id, building_id]);
-        const response = await FoERequest.FetchRequestAsync(request);
+        const response = await FoERequest.FetchRequestAsync(request,{delay:100});
         if(response["result"]){
             FoEconsole.log(`Plunder ${response.result}`)
             if(response.result === "success"){

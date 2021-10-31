@@ -24,7 +24,7 @@ class FoeGB extends EventEmitter{
     }
     set minReturnProfit(e){
         if(this.#minReturnProfit === e) return;
-        this.#minReturnProfit = Number(e);;
+        this.#minReturnProfit = Number(e);
         localStorage.setItem('minReturnProfit', JSON.stringify(e));
     }
 
@@ -34,7 +34,7 @@ class FoeGB extends EventEmitter{
     }
     set minProfit(e){
         if(this.#minProfit === e) return;
-        this.#minProfit = Number(e);;
+        this.#minProfit = Number(e);
         localStorage.setItem('minProfit', JSON.stringify(e));
     }
 
@@ -46,16 +46,6 @@ class FoeGB extends EventEmitter{
         if(this.#includeFriends === e) return;
         this.#includeFriends = e;
         localStorage.setItem('includeFriends', JSON.stringify(e));
-    }
-
-    #ignorePlayers = '';
-    get ignorePlayers(){
-        return this.#ignorePlayers;
-    }
-    set ignorePlayers(e){
-        if(this.#ignorePlayers === e) return;
-        this.#ignorePlayers = e;
-        localStorage.setItem('ignorePlayers', JSON.stringify(e));
     }
 
     #foundBuildings=[];
@@ -87,10 +77,6 @@ class FoeGB extends EventEmitter{
         const loadedincFriends = localStorage.getItem('includeFriends');
         if(loadedincFriends && loadedincFriends != 'null')
             this.includeFriends = JSON.parse(loadedincFriends);
-
-        const loadedignorePlayers = localStorage.getItem('ignorePlayers');
-        if(loadedignorePlayers && loadedignorePlayers != 'null')
-            this.ignorePlayers = JSON.parse(loadedignorePlayers);
     }
     
     async contributeForgePoints(buildingId,playerId,buildingLvl,fp){     
@@ -167,10 +153,8 @@ class FoeGB extends EventEmitter{
 
     async CheckBuildings(playerList){
         this.foundBuildings=[];
-        const playersToIgonore = this.ignorePlayers.split(',');
         for(const player of playerList ){
-            if(player.is_active && playersToIgonore.indexOf(player.name) === -1) 
-                await this.getStealableGBPlaces(player);
+            if(player.is_active) await this.getStealableGBPlaces(player);
         }
         FoEconsole.log('Finished scanning buildings');
     }

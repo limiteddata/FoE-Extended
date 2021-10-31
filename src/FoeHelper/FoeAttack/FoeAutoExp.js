@@ -18,6 +18,7 @@ class FoeAutoExp extends EventEmitter{
         if(this.#autoExpedition === e) return;
         this.#autoExpedition = e;
         localStorage.setItem('autoExpedition', JSON.stringify(e));
+        this.emit('autoExpeditionChanged', this.autoExpedition);
         if(e) this.checkExpedition();
     }
 
@@ -64,6 +65,7 @@ class FoeAutoExp extends EventEmitter{
         for(let i=0; i<num; i++){
             if(armyIndex > armyManagement.attackArmy.length-1) {
                 FoEconsole.log('Too many attack attempts');
+                this.autoExpedition = false;
                 return -1;
             }
             let overview = await this.getExpeditionOverview();
@@ -71,7 +73,7 @@ class FoeAutoExp extends EventEmitter{
             if(!overview['progress'].hasOwnProperty('difficulty')) overview['progress']['difficulty'] = 0;  
             if(overview['progress']['isMapCompleted'] === true ){      
                 if (overview.progress.difficulty === 3){
-                    FoEconsole.log(`Expedition finished`);   
+                    FoEconsole.log(`Expedition finished`);
                     return -1;
                 }
                 if(await this.checkifMapUnlocked(overview.progress.difficulty)){
@@ -119,12 +121,15 @@ class FoeAutoExp extends EventEmitter{
                     if(attempts === 0){  
                         FoEconsole.log('Not enough attempts');
                         resolve('Not enough attempts');
+                        return;
                     }
                     while(attempts>0){
-                        if(await this.loopExp(attempts) === -1) resolve('Used all attempts');
+                        if(await this.loopExp(attempts) === -1) {
+                            resolve('Used all attempts');
+                            return;
+                        }
                         attempts = (await FoEPlayers.getResources()).guild_expedition_attempt; 
                     }
-                    this.#checking = false;
                     FoEconsole.log('Used all attempts');
                     resolve('Finished solving expedition');
                 } catch (error) {
@@ -142,7 +147,8 @@ class FoeAutoExp extends EventEmitter{
                     return `${data}`
                 }
             }
-        })   
+        })  
+        this.#checking = false; 
     }
     
 }

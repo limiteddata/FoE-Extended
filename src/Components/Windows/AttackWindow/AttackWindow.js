@@ -12,6 +12,16 @@ const windowstyle = {
 }
 
 export default function AttackWindow({open,setOpen}) {  
+    const [autoExp, setautoExp] = useState(FoEAutoExp.autoExpedition);
+    useEffect(() => {
+        // on window mount
+        const update = (e)=> setautoExp(e);
+        FoEAutoExp.on('autoExpeditionChanged',update);
+        return () => {
+            //cleanup
+            FoEAutoExp.off('autoExpeditionChanged',update)
+        }
+    }, [])
 
     return(
         <ModalWindow title={'Attack Menu'} windowstyle={windowstyle} openWindow={open} closeWindow={()=>setOpen(false)}>
@@ -20,8 +30,8 @@ export default function AttackWindow({open,setOpen}) {
                 <button className='orange-button' 
                     onClick={async ()=> FoEAutoAttack.attackAllNeighbors()} >Attack Neighbors</button>
                 <Checkbox label={'Auto Attack Neighbors'}
-                    onChanged={(e)=> FoEAutoMPT.autoMotivateNeighbors = e}
-                    checked={false}/>
+                    onChanged={(e)=> FoEAutoAttack.autoAttackNeighbors = e}
+                    checked={FoEAutoAttack.autoAttackNeighbors}/>
             </div>
             
 
@@ -52,7 +62,7 @@ export default function AttackWindow({open,setOpen}) {
             </div>
             <Checkbox label={'Auto Expedition'}
                 onChanged={(e)=> FoEAutoExp.autoExpedition = e}
-                checked={FoEAutoExp.autoExpedition}/>  
+                checked={autoExp}/>  
         </ModalWindow>
     )
 }

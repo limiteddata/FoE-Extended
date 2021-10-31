@@ -8,6 +8,7 @@ import Checkbox from '../../Checkbox/Checkbox'
 import GBuilding from './GBuilding';
 import StealButton from '../../StealButton/StealButton';
 import { toast } from 'react-toastify';
+import { FoEPlayers } from '../../../FoeHelper/FoEPlayers/FoEPlayers';
 
 const windowstyle = {
     width: 615,
@@ -55,9 +56,7 @@ export default function GBWindow({open,setOpen}) {
         <ModalWindow title={'GB Menu'} windowstyle={windowstyle} openWindow={open} closeWindow={()=>setOpen(false)}>
             <div className='row'>       
                 <div className='col'>
-                    <Checkbox label={'Include guild/friends'}
-                        onChanged={(e)=> FoEGB.includeFriends = e}
-                        checked={FoEGB.includeFriends}/>
+
                     <button 
                         className='orange-button'
                         onClick={async ()=> {
@@ -82,12 +81,9 @@ export default function GBWindow({open,setOpen}) {
                         onChange={(e)=> FoEGB.minProfit = e}/>
                 </div>
                 <div className='col'>
-                    <Input label={'Ignore players'}
-                        style={{width:92}}
-                        type={'text'}
-                        placeholder={'playername, ...'}
-                        value={FoEGB.ignorePlayers} 
-                        onChange={(e)=> FoEGB.ignorePlayers = e}/>   
+                <Checkbox label={'Include guild/friends'}
+                        onChanged={(e)=> FoEGB.includeFriends = e}
+                        checked={FoEGB.includeFriends}/>
                     <Input label={'Min return profit(%)'} 
                         min={1}
                         type={'number'}

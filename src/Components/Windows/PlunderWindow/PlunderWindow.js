@@ -59,10 +59,14 @@ export default function PlunderWindow({open,setOpen}) {
                         checked={FoEPlunder.autoCheckPlunder}/>            
                 </div>
                 <div className='flexCol'>
-                    <Input label={'Min plunder'} min={1}
+                    <Input label={'Min plunder'} 
+                        type={'Number'}
+                        min={1}
                         value={FoEPlunder.plunderMinAmount} 
                         onChange={(e)=>FoEPlunder.plunderMinAmount = e}/>
-                    <Input label={'Check interval (min.)'} min={1}
+                    <Input label={'Check interval (min.)'} 
+                        type={'Number'}
+                        min={1}
                         value={FoEPlunder.checkInterval} 
                         onChange={(e)=>FoEPlunder.checkInterval = e}/>
                 </div>
