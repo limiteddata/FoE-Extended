@@ -116,7 +116,12 @@ class FoeAutoExp extends EventEmitter{
         await toast.promise(
             new Promise(async (resolve,reject)=>{
                 try {
-                    FoEconsole.log("Starting to attack in expedition");    
+                    FoEconsole.log("Starting to attack in expedition");   
+                    let overview = await this.getExpeditionOverview();
+                    if(overview.state === 'inactive') {
+                        resolve('Not participating to expedition');
+                        return;
+                    }
                     let attempts = (await FoEPlayers.getResources()).guild_expedition_attempt; 
                     if(attempts === 0){  
                         FoEconsole.log('Not enough attempts');

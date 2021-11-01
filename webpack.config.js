@@ -15,6 +15,7 @@ var alias = {
 
 // load the secrets
 var secretsPath = path.join(__dirname, 'secrets.' + env.NODE_ENV + '.js');
+const Dotenv = require('dotenv-webpack');
 
 var fileExtensions = [
   'jpg',
@@ -107,6 +108,7 @@ var options = {
       .concat(['.js', '.jsx', '.ts', '.tsx', '.css']),
   },
   plugins: [
+    new Dotenv(),
     new webpack.ProgressPlugin(),
     // clean the build folder
     new CleanWebpackPlugin({
@@ -115,6 +117,7 @@ var options = {
     }),
     // expose and write the allowed env vars on the compiled bundle
     new webpack.EnvironmentPlugin(['NODE_ENV']),
+    
     new CopyWebpackPlugin({
       patterns: [
         {

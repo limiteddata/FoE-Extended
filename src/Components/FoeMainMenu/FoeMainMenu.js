@@ -19,6 +19,7 @@ const gb = urlResolver.resolve('/src/assets/img/great_building.png')
 const Options = urlResolver.resolve('/src/assets/img/options.png')
 
 export default function FoeMainMenu() {
+    console.log(process.env.REACT_VERSION)
     return (
         <MainMenu>           
             <MenuItem
