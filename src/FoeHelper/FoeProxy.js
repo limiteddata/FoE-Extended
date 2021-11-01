@@ -1,3 +1,5 @@
+import { v4 as uuid} from 'uuid';
+
 class FoeProxy {
     handlers = {};
     debug = false;
@@ -37,11 +39,12 @@ class FoeProxy {
             }
         }
         const checkResponse = (response)=>{
-            if(this.debug) console.log(response)
+            if(this.debug) console.log(response);
             for (let i = 0; i < response.length; i++) {
                 if(this.handlers.hasOwnProperty(response[i]['requestMethod']) ){
                     try {
-                        this.handlers[response[i]['requestMethod']].callback(response[i]['responseData']);
+                        for (let x = 0; x < this.handlers[response[i]['requestMethod']].length; x++) 
+                            this.handlers[response[i]['requestMethod']][x].callback(response[i]['responseData']);
                     } catch (error) {
                         console.log(error)
                     }
@@ -50,8 +53,16 @@ class FoeProxy {
         }
     }
     addHandler = (responseMethod,callback)=>{
-        this.handlers[responseMethod] = {callback:callback}
+        if(!this.handlers[responseMethod]) this.handlers[responseMethod] = [];
+        const handler = {id: uuid(), responseMethod: responseMethod, callback:callback}
+        this.handlers[responseMethod].push( handler )
+        return handler;
     }
+    removeHandler = (handler)=>{
+        if(!this.handlers[handler.responseMethod]) return;
+        const newHandlers = this.handlers[handler.responseMethod].filter(hd=> hd.id !== handler.id)
+        this.handlers[handler.responseMethod] = newHandlers;
+    } 
 }
 const FoEProxy = new FoeProxy();
 export { FoEProxy }

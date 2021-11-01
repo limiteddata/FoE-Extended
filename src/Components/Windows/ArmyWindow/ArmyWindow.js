@@ -6,6 +6,8 @@ import './ArmyWindow.scss';
 import { armyManagement } from '../../../FoeHelper/ArmyManagement/ArmyManagement';
 import ArmyShowcase from './ArmyShowcase';
 import {arrayMoveImmutable} from 'array-move';
+import { FoEGVG } from '../../../FoeHelper/FoeAttack/FoeGVG/FoeGVG';
+import { toast } from 'react-toastify';
 
 const windowstyle={
     width: 690, 
@@ -68,9 +70,7 @@ export default function ArmyWindow({open,setOpen}) {
                         }}
                         armys={attackArmy}
                         saveArmy={saveArmy}
-                        armySelected={(e)=>{
-                            armyManagement.setNewArmy(e) 
-                        }}
+                        armySelected={(e)=>armyManagement.setNewArmy(e) }
                         />
                 </div>
                 <div label="GvG Army">
@@ -92,11 +92,17 @@ export default function ArmyWindow({open,setOpen}) {
                                 // clear
                                 if(e) setsaveArmy([])
                                 //append
-                                else
-                                    if(saveArmy.length > 0) {
-                                        armyManagement.gvgArmy = [...gvgArmy,saveArmy];
-                                        setgvgArmy(armyManagement.gvgArmy)
-                                    }                            
+                                else{
+                                    // check army age
+                                    if(saveArmy.length === 0) return;
+                                    const armyEra = FoEGVG.getEraofArmy(saveArmy);
+                                    if(armyEra === null){
+                                        toast.error(`Army contains multiple eras`);
+                                        return;
+                                    }
+                                    armyManagement.gvgArmy = [...gvgArmy,{era: armyEra ,army:saveArmy}];
+                                    setgvgArmy(armyManagement.gvgArmy)
+                                }                         
                         }}
                         saveUnitSelected={(e,i)=>{
                             saveArmy.splice(i,1);
@@ -104,7 +110,7 @@ export default function ArmyWindow({open,setOpen}) {
                         }}
                         armys={gvgArmy}
                         saveArmy={saveArmy}
-                        armySelected={(e)=>console.log(e)}
+                        armySelected={(e)=>armyManagement.setNewArmy(e.army) }
                         />
                 </div>
             </TabNavigation>

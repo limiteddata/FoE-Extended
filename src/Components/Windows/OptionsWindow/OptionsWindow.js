@@ -13,7 +13,7 @@ export default function Window4({open,setOpen}) {
         <ModalWindow title={'Options Menu'} windowstyle={windowstyle} openWindow={open}closeWindow={()=>setOpen(false)}>
             <Input 
                 label={'Ignore players'}
-                style={{width:92}}
+                style={{width:160}}
                 type={'text'}
                 placeholder={'playername, ...'}
                 value={FoEPlayers.ignorePlayers} 

@@ -25,7 +25,7 @@ class FoeRequest{
         return md5(data).toString(16).slice(0, 10);
     }
 
-    FetchRequestAsync = async (request, {delay=700, raw=false}={})=>{
+    FetchRequestAsync = async (request, {delay=600, raw=false}={})=>{
         if(!this.isReady){
             await wait(1000);
             if(!this.isReady) throw 'Extension is not ready!';

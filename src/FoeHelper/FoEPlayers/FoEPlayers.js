@@ -6,7 +6,7 @@ const EventEmitter = require("events");
 class FoePlayers extends EventEmitter{  
     currentPlayer;
     protectedPlayers;
-    #ignorePlayers = 'Rich9';
+    #ignorePlayers;
 
     get ignorePlayers(){
         return this.#ignorePlayers;

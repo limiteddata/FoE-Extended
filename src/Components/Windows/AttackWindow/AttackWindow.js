@@ -9,6 +9,8 @@ import { FoEAutoExp } from '../../../FoeHelper/FoeAttack/FoeAutoExp';
 import { FoEGBG } from '../../../FoeHelper/FoeAttack/FoeGBG/FoeGBG';
 import Dropdown from 'react-dropdown';
 import { sectors } from '../../../FoeHelper/FoeAttack/FoeGBG/map1Sectors';
+import { gvgeras } from '../../../FoeHelper/FoeAttack/FoeGVG/gvgEras';
+import { FoEGVG } from '../../../FoeHelper/FoeAttack/FoeGVG/FoeGVG';
 
 const windowstyle = {
     width: 490,
@@ -18,7 +20,7 @@ const windowstyle = {
 export default function AttackWindow({open,setOpen}) {  
     const [autoExp, setautoExp] = useState(FoEAutoExp.autoExpedition);
     const [sector, setsector] = useState('A1MT');
-
+    const [gvgera, setgvgera] = useState('AllAge');
     useEffect(() => {
         // on window mount
         const update = (e)=> setautoExp(e);
@@ -41,22 +43,29 @@ export default function AttackWindow({open,setOpen}) {
             </div>
             
 
-
             <div className='flexRow'>
-                <button className='orange-button' 
-                    onClick={async ()=> await FoEAttack.attackExp()} >Attack GVG</button>
-                <Checkbox label={'Auto attack gvg'}
-                    onChanged={(e)=> FoEAutoMPT.autoMotivateNeighbors = e}
-                    checked={false}/> 
+                <div className='flexCol'>
+                    <button className='orange-button' 
+                        onClick={async ()=> await FoEGVG.attackEra(gvgera)} >Attack GVG</button>
+                    <button className='orange-button' 
+                        onClick={async ()=> await FoEGVG.defendEra(gvgera)} >Defend GVG</button>
+                </div>
+                <div className='flexCol'>
+                    <Checkbox label={'Auto attack gvg'}
+                        onChanged={(e)=> FoEGVG.autoAttackGVG = e}
+                        checked={FoEGVG.autoAttackGVG}/> 
+                    <Checkbox label={'Auto defend gvg'}
+                        onChanged={(e)=> FoEGVG.autoDefendGVG = e}
+                        checked={FoEGVG.autoDefendGVG}/>  
+                </div>
+                <div className='flexCol'>
+                    <Dropdown 
+                        onChange={(e)=>setgvgera(e.value)}
+                        options={gvgeras}  
+                        value={gvgera} />
+                </div>
             </div>
 
-            <div className='flexRow'>
-                <button className='orange-button' 
-                    onClick={async ()=> await FoEPlayerUtils.MotivateNeighbors()} >Defend GVG</button>
-                <Checkbox label={'Auto defend gvg'}
-                    onChanged={(e)=> FoEAutoMPT.autoMotivateNeighbors = e}
-                    checked={false}/>  
-            </div>
 
             <div className='flexRow'>
                 <button className='orange-button' 

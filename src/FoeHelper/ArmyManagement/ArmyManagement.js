@@ -94,7 +94,7 @@ class ArmyManagement extends EventEmitter{
     }
     getArmyInfo = async () => {
         const request = requestJSON("ArmyUnitManagementService","getArmyInfo",[{ "__class__": "ArmyContext", "content": "main" }]);
-        return await FoERequest.FetchRequestAsync(request);
+        return await FoERequest.FetchRequestAsync(request,{delay:300});
     }
 
     getArmyType = async () => {
@@ -130,16 +130,17 @@ class ArmyManagement extends EventEmitter{
             ], { "__class__": "ArmyContext", "content": "main" }
         ];
         const request = requestJSON("ArmyUnitManagementService","updatePools",requestData);
-        await FoERequest.FetchRequestAsync(request);
+        await FoERequest.FetchRequestAsync(request,{delay:200});
         FoEconsole.log('New army set');
     }
     async setNewAttackArmy(index){
         if(!this.attackArmy[index]) throw (`Attack army not set`);
         await this.setNewArmy(this.attackArmy[index]);
     }
-    async setNewGVGArmy(index){
-        if(!this.gvgArmy[index]) throw (`GVG army not set`);
-        await this.setNewArmy(this.gvgArmy[index]);
+    async setNewGVGArmy(eraName,index){
+        const army = this.gvgArmy.filter(army=> army.era === eraName)
+        if(!army[index]) throw (`GVG army not set`);
+        await this.setNewArmy(army[index].army);
     }
 }
 

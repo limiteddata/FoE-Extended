@@ -2,7 +2,8 @@ import React, {useState} from 'react'
 import ArmyUnit from './ArmyUnit'
 import { v4 as uuid} from 'uuid';
 
-function ArmyContainer({army, style, unitSelected, armySelected, setPos, remove}) {
+function ArmyContainer({army, typeGvG,style, unitSelected, armySelected, setPos, remove}) {
+    const renderArmy = typeGvG ? army.army: army;
     return (
         <div className='armyItem' style={style} onClick={()=>armySelected(army)}>
             {
@@ -10,7 +11,7 @@ function ArmyContainer({army, style, unitSelected, armySelected, setPos, remove}
             } 
             <div className='armyContent'>
                 {
-                    army.map((unit,i)=> 
+                    renderArmy.map((unit,i)=> 
                         <ArmyUnit
                             key={uuid()}
                             unit={unit}
@@ -25,6 +26,10 @@ function ArmyContainer({army, style, unitSelected, armySelected, setPos, remove}
                     <div className='selbutton selbtndown' onClick={(e)=>{e.stopPropagation(); setPos(1)}}></div>
                 </div>
             }
+            {
+                typeGvG && army.era
+            }
+            
         </div>
     )
 }
@@ -44,6 +49,7 @@ export default function ArmyShowcase({armys, typeGvG, saveArmy, saveUnitSelected
                                 remove={()=>onRemove(i)}
                                 key={uuid()} 
                                 armySelected={(unit)=>armySelected(unit)}
+                                typeGvG={typeGvG}
                                 army={army} />
                     })
                 }
