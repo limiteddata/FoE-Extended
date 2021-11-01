@@ -6,13 +6,19 @@ import Input from '../../Input/Input';
 import { armyManagement } from '../../../FoeHelper/ArmyManagement/ArmyManagement';
 import { FoEAutoAttack } from '../../../FoeHelper/FoeAttack/FoEAutoAttack';
 import { FoEAutoExp } from '../../../FoeHelper/FoeAttack/FoeAutoExp';
+import { FoEGBG } from '../../../FoeHelper/FoeAttack/FoeGBG/FoeGBG';
+import Dropdown from 'react-dropdown';
+import { sectors } from '../../../FoeHelper/FoeAttack/FoeGBG/map1Sectors';
+
 const windowstyle = {
-    width: 370,
-    height: 300,
+    width: 490,
+    height: 385,
 }
 
 export default function AttackWindow({open,setOpen}) {  
     const [autoExp, setautoExp] = useState(FoEAutoExp.autoExpedition);
+    const [sector, setsector] = useState('A1MT');
+
     useEffect(() => {
         // on window mount
         const update = (e)=> setautoExp(e);
@@ -54,11 +60,18 @@ export default function AttackWindow({open,setOpen}) {
 
             <div className='flexRow'>
                 <button className='orange-button' 
-                    onClick={async ()=> await FoEPlayerUtils.MotivateNeighbors()} >Attack GBG</button>
-                <Input label={'Num. attacks'} 
-                    min={1} style={{width:85}}
-                    value={130} 
-                    onChange={(e)=>FoEPlunder.plunderMinAmount = e}/>
+                    onClick={async ()=> await FoEGBG.attackGBG(sector)} >Attack GBG</button>
+                <Input
+                    type={'Number'} 
+                    label={'Num. attacks'} 
+                    min={1} 
+                    style={{width:85}}
+                    value={FoEGBG.numAttacks} 
+                    onChange={(e)=>FoEGBG.numAttacks = e}/>
+                <Dropdown 
+                    onChange={(e)=>setsector(e.value)}
+                    options={Object.keys(sectors)}  
+                    value={sector} />
             </div>
             <Checkbox label={'Auto Expedition'}
                 onChanged={(e)=> FoEAutoExp.autoExpedition = e}

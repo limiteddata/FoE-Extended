@@ -25,9 +25,9 @@ class FoeAttack extends EventEmitter{
             if(battleResponse.battleType.totalWaves === 2){
                 response = await FoERequest.FetchRequestAsync(request,{raw:true});
                 battleResponse = getResponseMethod(response,"startByBattleType")
-                if(battleResponse.state.winnerBit === 1) FoEconsole.log("Won seccond battle");
+                if(battleResponse.state.winnerBit === 1) FoEconsole.log("Won second battle");
                 else{
-                    FoEconsole.log("Lost seccond battle");     
+                    FoEconsole.log("Lost second battle");     
                     return 1;
                 }
             }

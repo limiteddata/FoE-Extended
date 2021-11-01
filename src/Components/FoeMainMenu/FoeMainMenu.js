@@ -20,11 +20,7 @@ const Options = urlResolver.resolve('/src/assets/img/options.png')
 
 export default function FoeMainMenu() {
     return (
-        <MainMenu>  
-            <MenuItem
-                name={'Options Menu'}
-                icon={Options}
-                component={<OptionsWindow/>}/>             
+        <MainMenu>           
             <MenuItem
                 name={'Army Management'}
                 icon={armyicon}
@@ -45,6 +41,10 @@ export default function FoeMainMenu() {
                 name={'Attack Menu'}
                 icon={attack}
                 component={<AttackWindow/>}/>    
+            <MenuItem
+                name={'Options Menu'}
+                icon={Options}
+                component={<OptionsWindow/>}/>    
             <MenuItem
                 name={'Console'}
                 icon={terminal}

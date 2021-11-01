@@ -18,6 +18,7 @@ export default function PlunderWindow({open,setOpen}) {
         return e.map(building=>{
             return  [
                 `#${building.player_rank}`, 
+                new Date().toTimeString().slice(0,8),
                 building.player_name, 
                 <CityBuilding name={building.cityentity_id}/>,
                 building.cityentity_id.split('_')[2], 
@@ -28,7 +29,7 @@ export default function PlunderWindow({open,setOpen}) {
     })}
     const [data, setData] = useState(modifiedBuilding(FoEPlunder.plunderableBuildings))
     const [totalFP, settotalFP] = useState(0)
-    const header = ['ID', 'Player', 'Building', 'Name', `FP (Total ${totalFP} FP)`, 'Action'];
+    const header = ['ID','Time', 'Player', 'Building', 'Name', `FP (Total ${totalFP} FP)`, 'Action'];
     useEffect(() => {
         const updateData = (e)=>{      
             setData(modifiedBuilding(e))

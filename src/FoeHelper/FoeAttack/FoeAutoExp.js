@@ -64,7 +64,7 @@ class FoeAutoExp extends EventEmitter{
         let armyIndex = 0;   
         for(let i=0; i<num; i++){
             if(armyIndex > armyManagement.attackArmy.length-1) {
-                FoEconsole.log('Too many attack attempts');
+                FoEconsole.log('Too many failed attack attempts');
                 this.autoExpedition = false;
                 return -1;
             }

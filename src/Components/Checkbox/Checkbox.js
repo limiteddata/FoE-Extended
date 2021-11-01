@@ -1,10 +1,14 @@
 
-import React, { useState, } from 'react';
+import React, { useState, useEffect} from 'react';
 import './Checkbox.scss';
 
-export default function Checkbox({label, checked,onChanged, noState }) {
+
+export default function Checkbox({label, checked,onChanged }) {
     const [state, setstate] = useState(checked?checked:false);
-    if(state !== checked) setstate(checked);
+    useEffect(() => {
+        setstate(checked);
+    }, [checked])
+    
     return(
         <div className='checkboxBody' onClick={()=>{
             onChanged && onChanged(!state);

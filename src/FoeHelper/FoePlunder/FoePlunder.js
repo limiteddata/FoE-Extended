@@ -48,10 +48,7 @@ class FoePlunder extends EventEmitter{
         if(this.#autoCheckPlunder === e || e.constructor === Number()) return;
         this.#autoCheckPlunder = e;
         localStorage.setItem('autoCheckPlunder', JSON.stringify(e));    
-        if(e) {
-            this.checkPlunder();
-            this.#timeoutInterval = setInterval(()=>this.checkPlunder(),this.checkInterval*60000);
-        }
+        if(e) this.#timeoutInterval = setInterval((()=>this.checkPlunder())(),this.checkInterval*60000);
         else clearInterval(this.#timeoutInterval);
     }
 

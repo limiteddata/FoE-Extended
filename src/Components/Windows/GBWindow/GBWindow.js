@@ -22,6 +22,7 @@ export default function GBWindow({open,setOpen}) {
         return e.map(building=>{
             return  [
                 `#${building.player.rank}`, 
+                new Date().toTimeString().slice(0,8),
                 building.player.name, 
                 <GBuilding name={building.building.city_entity_id}/>,
                 building.building.level,
@@ -39,7 +40,7 @@ export default function GBWindow({open,setOpen}) {
 
     const [data, setData] = useState(modifiedBuilding(FoEGB.foundBuildings))
     const [totalFP, settotalFP] = useState(0)
-    const header = ['Rank', 'Player', 'Building', 'Level','Rank', 'FP',`Profit(${totalFP} FP)`, 'Action'];
+    const header = ['ID','Time', 'Player', 'Building', 'Level','Rank', 'FP',`Profit(${totalFP} FP)`, 'Action'];
 
     useEffect(() => {
         const updateData = (e)=>{      
