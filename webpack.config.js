@@ -15,7 +15,6 @@ var alias = {
 
 // load the secrets
 var secretsPath = path.join(__dirname, 'secrets.' + env.NODE_ENV + '.js');
-const Dotenv = require('dotenv-webpack');
 
 var fileExtensions = [
   'jpg',
@@ -108,7 +107,7 @@ var options = {
       .concat(['.js', '.jsx', '.ts', '.tsx', '.css']),
   },
   plugins: [
-    new Dotenv(),
+    new webpack.DefinePlugin({VERSION: JSON.stringify(require("./package.json").version)}),
     new webpack.ProgressPlugin(),
     // clean the build folder
     new CleanWebpackPlugin({
@@ -125,6 +124,7 @@ var options = {
           to: path.join(__dirname, 'build'),
           force: true,
           transform: function (content, path) {
+            
             return Buffer.from(
               JSON.stringify({
                 description: process.env.npm_package_description,

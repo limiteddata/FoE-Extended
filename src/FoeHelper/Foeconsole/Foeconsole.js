@@ -27,6 +27,6 @@ class Foeconsole extends EventEmitter{
 }
 
 const FoEconsole = new Foeconsole();
-FoEconsole.log(`FOE Extended v loaded!`);
+FoEconsole.log(`FOE Extended v${VERSION} loaded!`);
 
 export { FoEconsole }
