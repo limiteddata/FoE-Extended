@@ -11,6 +11,15 @@ const EventEmitter = require("events");
 class FoeAutoExp extends EventEmitter{  
     #autoExpedition=false;
     #checking=false;
+/*
+    "autoRefill": {
+        "interval": 3600,
+        "refillAmount": 1,
+        "maxAmount": 8,
+        "type": "autoRefill",
+        "__class__": "ResourceAutoRefillAbility"
+    }
+*/
     get autoExpedition(){
         return this.#autoExpedition;
     }
@@ -118,7 +127,7 @@ class FoeAutoExp extends EventEmitter{
                 try {
                     FoEconsole.log("Starting to attack in expedition");   
                     let overview = await this.getExpeditionOverview();
-                    if(overview.state === 'inactive') {
+                    if(overview.state === 'inactive' && overview.isPlayerParticipating && overview.isGuildParticipating) {
                         resolve('Not participating to expedition');
                         return;
                     }

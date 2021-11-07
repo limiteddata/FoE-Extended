@@ -2,7 +2,6 @@ import md5 from 'md5';
 import { wait, getResponseMethod } from './Utils';
 
 class FoeRequest{
-    
     gameOptions = {
         secret: null,
         version: null,

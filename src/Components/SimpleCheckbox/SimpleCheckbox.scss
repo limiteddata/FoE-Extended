@@ -1,0 +1,17 @@
+@import '../../styles/colors';
+@import '../../styles/properties';
+.simplecheckboxBody {
+  @include flexHcenter;
+  flex-direction: row;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.checkboxCheck {
+  width: 26px;
+  height: 26px;
+  @include flexAllcenter;
+  background: url('https://foero.innogamescdn.com/assets/shared/gui/window/checkbox.png');
+  background-size: cover;
+  margin-left: 5px;
+}

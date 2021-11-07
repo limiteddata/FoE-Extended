@@ -33,7 +33,6 @@ export default function AttackWindow({open,setOpen}) {
 
     return(
         <ModalWindow title={'Attack Menu'} windowstyle={windowstyle} openWindow={open} closeWindow={()=>setOpen(false)}>
-            
             <div className='flexRow' style={{marginTop:15}}>
                 <button className='orange-button' 
                     onClick={async ()=> FoEAutoAttack.attackAllNeighbors()} >Attack Neighbors</button>

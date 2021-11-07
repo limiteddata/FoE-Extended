@@ -16,7 +16,7 @@ export default function Checkbox({label, checked,onChanged }) {
             }}>
             <div className='checkboxLabel'>{label}</div>
             { 
-                state && <div className='checkboxCheck'></div> 
+                state && <div className='checkboxChecked'></div> 
             }
         </div>
     )

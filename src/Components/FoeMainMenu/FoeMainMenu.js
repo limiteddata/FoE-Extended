@@ -10,6 +10,9 @@ import PlunderWindow from '../../Components/Windows/PlunderWindow/PlunderWindow'
 import GBWindow from '../Windows/GBWindow/GBWindow';
 import AttackWindow from '../Windows/AttackWindow/AttackWindow';
 import OptionsWindow from '../Windows/OptionsWindow/OptionsWindow';
+import ProductionWindow from '../Windows/ProductionWindow/ProductionWindow';
+
+
 const armyicon = urlResolver.resolve('/src/assets/img/icon_armyManagement.png')
 const terminal = urlResolver.resolve('/src/assets/img/terminal.png')
 const motivate = urlResolver.resolve('/src/assets/img/motivate.png')
@@ -17,6 +20,8 @@ const plunder = urlResolver.resolve('/src/assets/img/steal.png')
 const attack = urlResolver.resolve('/src/assets/img/attack.png')
 const gb = urlResolver.resolve('/src/assets/img/great_building.png')
 const Options = urlResolver.resolve('/src/assets/img/options.png')
+const production = urlResolver.resolve('/src/assets/img/production.png')
+
 
 export default function FoeMainMenu() {
     return (
@@ -41,6 +46,10 @@ export default function FoeMainMenu() {
                 name={'Attack Menu'}
                 icon={attack}
                 component={<AttackWindow/>}/>    
+             <MenuItem
+                name={'Production Menu'}
+                icon={production}
+                component={<ProductionWindow/>}/>    
             <MenuItem
                 name={'Options Menu'}
                 icon={Options}

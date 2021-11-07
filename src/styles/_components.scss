@@ -31,6 +31,26 @@
 .orange-button:hover {
   background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/largeMenuOver.png');
 }
+.addButton {
+  width: 30px;
+  height: 30px;
+  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/plus_button_normal.png');
+  background-size: 100% 100%;
+}
+.addButton:hover {
+  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/plus_button_hover.png');
+}
+
+.removeButton {
+  width: 24px;
+  height: 24px;
+  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/decline_button_up.png');
+  background-size: 100% 100%;
+}
+.removeButton:hover {
+  background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/decline_button_over.png');
+}
+
 .close-button {
   background-image: url('https://foero.innogamescdn.com/assets/shared/buttons/closeUp.png');
 }

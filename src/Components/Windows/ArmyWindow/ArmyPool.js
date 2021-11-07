@@ -44,7 +44,9 @@ export const ArmyPool = React.memo( ({unassignedArmy,defendingArmy, onUnitSelect
                 <TabItem label={'light_melee'} activeTab={activeTab} onClick={changeActiveTab}/>
                 <TabItem label={'long_ranged'} activeTab={activeTab} onClick={changeActiveTab}/>
                 <TabItem label={'short_ranged'} activeTab={activeTab} onClick={changeActiveTab}/>
-                <Dropdown options={ages} onChange={(e)=>setAge(e.value)} value={age} />
+                <div className='eraPool'>
+                    <Dropdown options={ages} onChange={(e)=>setAge(e.value)} value={age} />
+                </div>
             </ol> 
             <div className={'poolContent'} ref={contentRef}>
                 {      
