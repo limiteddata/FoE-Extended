@@ -2,7 +2,7 @@ import { v4 as uuid} from 'uuid';
 
 class FoeProxy {
     handlers = {};
-    debug = true;
+    debug = false;
     constructor(){         
         // proxy response messages
         const XHR = XMLHttpRequest.prototype;
