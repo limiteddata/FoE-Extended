@@ -1,11 +1,11 @@
-<img src="src/assets/img/icon-128.png" width="64"/>
+<img src="src/assets/img/icon-128.png" width="128"/>
 
-# FoE-Extended
+# FoE Extended
 
 
 - **_This is the new version of the now depricated [FOE Helper Bot](https://github.com/limiteddata/FOE-Helper-Bot)!_**
-- This bot is created to extend from the old bot and bring a more user friendly UI.
-
+- This bot was created to bring a more user friendly UI with all the functionality and more from the old helper.
+- 
 
 ## Features
 
@@ -24,7 +24,7 @@ Please open up an issue to inform me of any bug you find.
 
 ## Installing and Running
 
-**Google Chrome Extention** can be found here: [link](https://nodejs.org/)
+**Google Chrome Extention** can be found here: [link](https://)
 
 
 ### For developers:
