@@ -5,9 +5,6 @@
 
 - **_This is the new version of the now depricated [FOE Helper Bot](https://github.com/limiteddata/FOE-Helper-Bot)!_**
 - This bot was created to bring a more user friendly UI with all the functionality and more from the old helper.
-<<<<<<< HEAD
-=======
->>>>>>> 8ed0a82995457cb8d2585a107f529b151115db4f
 
 ## Features
 
