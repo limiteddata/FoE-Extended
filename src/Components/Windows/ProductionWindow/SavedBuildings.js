@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { FoECity } from '../../../FoeHelper/FoeProduction/FoeCity'
+import { FoECity } from '../../../FoeHelper/FoeCity/FoeCity'
 import SavedBuilding from './SavedBuilding';
 import ModalWindow from '../../ModalWindow/ModalWindow';
 import CityBuilding from '../../CityBuilding/CityBuilding';

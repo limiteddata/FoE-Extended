@@ -2,7 +2,7 @@ import React from 'react'
 import CityBuilding from '../../CityBuilding/CityBuilding';
 import Dropdown from 'react-dropdown';
 import SimpleCheckbox from '../../SimpleCheckbox/SimpleCheckbox';
-import { FoECity } from '../../../FoeHelper/FoeProduction/FoeCity';
+import { FoECity } from '../../../FoeHelper/FoeCity/FoeCity';
 import { goodsOptions, productionOptions} from './ProductionOptions';
 export default function SavedBuilding({building}) {
     const options = building.type === "goods"? goodsOptions : productionOptions;

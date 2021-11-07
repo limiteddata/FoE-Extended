@@ -75,7 +75,8 @@ class FoeCity extends EventEmitter{
         FoEProxy.addHandler('cancelProduction', e => this.updateEntities(e.updatedEntities));
         FoEProxy.addHandler('startProduction', e => this.updateEntities(e.updatedEntities));
         FoEProxy.addHandler('completeProduction', e => this.updateEntities([e]));
-
+        FoEProxy.addHandler('placeBuilding', e => this.entities.push(e) );
+        
         const loadedGoodsOption = localStorage.getItem('defaultGoodsOption');
         if(loadedGoodsOption && loadedGoodsOption != 'null')
             this.defaultGoodsOption = JSON.parse(loadedGoodsOption);

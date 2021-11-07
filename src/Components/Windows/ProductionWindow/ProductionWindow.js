@@ -3,7 +3,7 @@ import ModalWindow from '../../ModalWindow/ModalWindow';
 import './ProductionWindow.scss';
 import Checkbox from '../../Checkbox/Checkbox';
 import Dropdown from 'react-dropdown';
-import { FoECity } from '../../../FoeHelper/FoeProduction/FoeCity';
+import { FoECity } from '../../../FoeHelper/FoeCity/FoeCity';
 import SavedBuildings from './SavedBuildings';
 import { goodsOptions, productionOptions} from './ProductionOptions';
 const windowstyle = {
