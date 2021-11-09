@@ -156,10 +156,11 @@ class FoeCity extends EventEmitter{
     }
     async setProductionBuilding(building){
         let prodOption = 1;
-        if(this.manualBuildings[building.id]) prodOption = this.manualBuildings[building.id].option;
+        if(building.type === "production") prodOption = this.defaultProductionOption;
         else if(building.type === "goods") prodOption = this.defaultGoodsOption;
-        else prodOption = this.defaultProductionOption;
-        if(building.type === "goods" && prodOption>4 ) prodOption = 4;
+        else return; // return because building cant be set
+        if(this.manualBuildings[building.id]) prodOption = this.manualBuildings[building.id].option;
+        if(building.type === "goods" && prodOption > 4 ) prodOption = 4;
         const request = requestJSON('CityProductionService','startProduction',[building.id, prodOption]);
         const response = await FoERequest.FetchRequestAsync(request, {delay:200});   
         FoEconsole.log(`Production building ${building.cityentity_id}(${building.id}) is produceing now ${prodOption}`);  

@@ -22,8 +22,7 @@ This is a Forge of Empires Chrome Extension to help improve your experience by g
 Please open up an issue to inform me of any bug you find.
 
 ## Installing and Running
-
-**Google Chrome Extention** can be found here: [link](https://)
+**Google Chrome Extention** can be found here: [link](https://chrome.google.com/webstore/detail/foe-extended/gcddiojppfdmckoeobpbbbndpinhbjnc)
 
 
 ### For developers:
