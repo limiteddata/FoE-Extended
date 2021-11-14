@@ -6,6 +6,7 @@ const EventEmitter = require("events");
 class FoePlayers extends EventEmitter{  
     currentPlayer;
     protectedPlayers;
+    playerResources;
     #ignorePlayers = "";
 
     get ignorePlayers(){
@@ -25,7 +26,10 @@ class FoePlayers extends EventEmitter{
             this.ignorePlayers = JSON.parse(loadedignorePlayers);
 
         FoEProxy.addHandler('getData',(e)=> this.currentPlayer = e.user_data)
-        FoEProxy.addHandler('getCityProtections',(e)=> this.protectedPlayers = e.map(player=>player.playerId))
+        FoEProxy.addHandler('getCityProtections',(e)=> this.protectedPlayers = e.map(player=>player.playerId));
+        // get player resources from request and from game
+        FoEProxy.addHandler('getPlayerResources', (e)=> this.playerResources = e.resources);
+        FoERequest.addHandler('getPlayerResources', (e)=> this.playerResources = e.resources);
     }
     async getFriendsList(){
         const playersToIgonore = this.ignorePlayers.split(/[ ,]+/);
@@ -68,8 +72,9 @@ class FoePlayers extends EventEmitter{
         return await FoERequest.FetchRequestAsync(request);
     }
     async getResources(){
-        const request = requestJSON("ResourceService","getPlayerResources")  
-        return (await FoERequest.FetchRequestAsync(request))['resources'];
+        const request = requestJSON("ResourceService","getPlayerResources");
+        this.playerResources = (await FoERequest.FetchRequestAsync(request)).resources;
+        return this.playerResources;
     }
 }
 

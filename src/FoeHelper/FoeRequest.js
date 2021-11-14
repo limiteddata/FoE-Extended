@@ -1,7 +1,8 @@
 import md5 from 'md5';
 import { wait, getResponseMethod } from './Utils';
+import ResponseHandler from './ResponseHandler';
 
-class FoeRequest{
+class FoeRequest extends ResponseHandler{
     gameOptions = {
         secret: null,
         version: null,
@@ -11,6 +12,7 @@ class FoeRequest{
     };
     _this;
     constructor(){
+        super();
         let scripts = document.getElementsByTagName('script');
         fetch(scripts[scripts.length-1].src).then(resp=>resp.text()).then(responseText=>{
             this.gameOptions.secret = responseText.split("VERSION_SECRET=\"")[1].split("\";")[0];
@@ -36,7 +38,11 @@ class FoeRequest{
             channel.port1.onmessage = ({data}) => {
               channel.port1.close();
               if (data.error) rej(data.error);
-              else res( raw ? data.result : getResponseMethod(data.result, request[0]['requestMethod']) );
+              else {
+                    let response = data.result;
+                    for (let i = 0; i < response.length; i++) this.handleCallbacks(response[i].requestMethod,response[i].responseData);
+                    res( raw ? response : getResponseMethod(response, request[0]['requestMethod']) );
+              }
             };
             window.postMessage({
                 type:"PageFetch", 

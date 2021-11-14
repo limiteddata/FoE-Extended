@@ -10,52 +10,69 @@ class FoePlayerUtils extends EventEmitter{
     constructor(){
         super();
     }
+    CheckPlayerList(playerList){
+        return playerList.filter(player=> !player.next_interaction_in && player.accepted === true);
+    }
     async MotivatePlayers(playerList){
         for (const player of playerList){
-            if(player['next_interaction_in'] || player['accepted'] === false) continue;
+            if(player.next_interaction_in || player.accepted === false) continue;
             FoEconsole.log(`Motivating player: ${player.name}`);
             const request = requestJSON("OtherPlayerService","polivateRandomBuilding",[player.player_id]);
             await FoERequest.FetchRequestAsync(request)
         }   
         FoEconsole.log(`Finished motivating players.`);
     }
-    async MotivateClanMembers(){
+    async MotivateClanMembers(){ 
+        const players = this.CheckPlayerList(await FoEPlayers.getClanMemberList());
+        if(players.length === 0) {
+            FoEconsole.log('No clan members to motivate');
+            return;
+        }
         FoEconsole.log(`Started motivating clan members.`);
-        await toast.promise(this.MotivatePlayers(await FoEPlayers.getClanMemberList()),
+        await toast.promise(players,
         {
             pending: 'Motivating clan members...',
             success: 'Finished motivating clan members.',
             error: 'Error while motivating clan members.'
-        })
+        });
     }
-    async MotivateFriends(){
+    async MotivateFriends(){  
+        const players = this.CheckPlayerList(await FoEPlayers.getFriendsList());
+        if(players.length === 0) {
+            FoEconsole.log('No friends to motivate');
+            return;
+        }
         FoEconsole.log(`Started motivating friends.`);
-        await toast.promise(this.MotivatePlayers(await FoEPlayers.getFriendsList()),
-            {
-                pending: 'Motivating friends...',
-                success: 'Finished motivating friends.',
-                error: 'Error while motivating friends.'
-            })
+        await toast.promise(players,
+        {
+            pending: 'Motivating clan members...',
+            success: 'Finished motivating clan members.',
+            error: 'Error while motivating clan members.'
+        });
     }
     async MotivateNeighbors(){
+        const players = this.CheckPlayerList(await FoEPlayers.getNeighborList());
+        if(players.length === 0) {
+            FoEconsole.log('No neighbors to motivate');
+            return;
+        }
         FoEconsole.log(`Started motivating neighbors.`);
-        await toast.promise(this.MotivatePlayers(await FoEPlayers.getNeighborList()),
+        await toast.promise(players,
         {
-            pending: 'Motivating neighbors...',
-            success: 'Finished motivating neighbors.',
-            error: 'Error while motivating neighbors.'
-        })
+            pending: 'Motivating clan members...',
+            success: 'Finished motivating clan members.',
+            error: 'Error while motivating clan members.'
+        });
     }
     async CollectTavern(){
-        FoEconsole.log("Collecting tavern");
+       
         const tavernSeats = await FoEPlayers.getTavernSeats();
         if(tavernSeats["unlockedChairs"] !== tavernSeats["occupiedSeats"]) {
             FoEconsole.log("Tavern is not fully occupied yet");
-            toast('Tavern is not fully occupied yet',{autoClose: 2000});
             return;
         }
+        FoEconsole.log("Collecting tavern");
         const request = requestJSON("FriendsTavernService","collectReward");
-
         await toast.promise(FoERequest.FetchRequestAsync(request),
         {
             pending: 'Collecting tavern...',
@@ -94,6 +111,7 @@ class FoePlayerUtils extends EventEmitter{
         const request = requestJSON("FriendService","deleteFriend",[player.player_id]);
         await FoERequest.FetchRequestAsync(request);
         FoEconsole.log(`Removed inactive player ${player.name}`);
+        toast.success(`Removed inactive player ${player.name}`);
     }
     async removeInactivePlayers(){   
         FoEconsole.log(`Started removing inactive players`);

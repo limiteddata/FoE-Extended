@@ -37,9 +37,9 @@ class FoeAutoExp extends EventEmitter{
         if(loadedautoExpedition && loadedautoExpedition != 'null')
             this.autoExpedition = JSON.parse(loadedautoExpedition);    
               
-        FoEProxy.addHandler('getPlayerResources', (e)=> {
-            if(e.resources.guild_expedition_attempt>0 && this.autoExpedition) this.checkExpedition();
-        })  
+        // FoEProxy.addHandler('getPlayerResources', (e)=> {
+        //     if(e.resources.guild_expedition_attempt>0 && this.autoExpedition) this.checkExpedition();
+        // })  
     }
     async checkifMapUnlocked(currentMap){
         const request = requestJSON("GuildExpeditionService","getDifficulties")  
