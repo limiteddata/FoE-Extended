@@ -26,7 +26,7 @@ class FoeRequest{
 
     FetchRequestAsync = async (request, {delay=600, raw=false}={})=>{
         if(!this.isReady){
-            await wait(1000);
+            await wait(1500);
             if(!this.isReady) throw 'Extension is not ready!';
         }
         if(delay !== 0) await wait(delay);

@@ -2,6 +2,7 @@ import { FoEPlayers } from '../FoEPlayers/FoEPlayers';
 import { toast } from "react-toastify";
 import { FoEAttack } from "./FoeAttack";
 import { armyManagement } from '../ArmyManagement/ArmyManagement';
+import { FoEconsole } from '../Foeconsole/Foeconsole';
 
 const EventEmitter = require("events");
 
@@ -24,19 +25,19 @@ class FoeAutoAttack extends EventEmitter{
     }
 
     async attackAllNeighbors(){
-        const neighbors = await FoEPlayers.getNeighborList();
-        const attacker = FoEPlayers.currentPlayer;
+        const neighbors = (await FoEPlayers.getNeighborList()).filter(neighbor=>
+            !neighbor.next_interaction_in && neighbor.canSabotage === false &&
+            FoEPlayers.protectedPlayers && FoEPlayers.protectedPlayers.indexOf(neighbor.player_id) === -1);
+        if(neighbors.length === 0) {
+            FoEconsole.log('No neighbor available to attack');
+            return;
+        }
         await toast.promise(
         new Promise(async (resolve,reject)=>{
             try {
                 for (const neighbor of neighbors){
-                    if(!neighbor.next_interaction_in && 
-                        neighbor.canSabotage === false ){
-                            if( FoEPlayers.protectedPlayers &&
-                                FoEPlayers.protectedPlayers.indexOf(neighbor.player_id) !== -1) continue;
-                            await armyManagement.setNewAttackArmy(0);
-                            await FoEAttack.pvpAttack(attacker,neighbor);
-                        }
+                    await armyManagement.setNewAttackArmy(0);
+                    await FoEAttack.pvpAttack(FoEPlayers.currentPlayer,neighbor);
                 }
                 resolve();
             } catch (error) {
@@ -52,10 +53,8 @@ class FoeAutoAttack extends EventEmitter{
                 return `${data}`
               }
             }
-          })   
+          })
     }
-
-    
 }
 
 const FoEAutoAttack = new FoeAutoAttack();
