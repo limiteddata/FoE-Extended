@@ -1,7 +1,7 @@
 import { FoEconsole } from "../Foeconsole/Foeconsole";
 import { FoERequest } from "../FoeRequest";
 import { FoEPlayers } from "../FoEPlayers/FoEPlayers";
-import { requestJSON } from "../Utils";
+import { requestJSON, wait } from "../Utils";
 import { hasDeepValue } from "has-deep-value";
 import { notPlunderableIDs } from "./NotPlunderableBuildings";
 import { toast } from 'react-toastify';
@@ -39,7 +39,6 @@ class FoePlunder extends EventEmitter{
         localStorage.setItem('checkInterval', JSON.stringify(e));
     }
 
-    #timeoutInterval;
     #autoCheckPlunder=false;
     get autoCheckPlunder(){
         return this.#autoCheckPlunder;
@@ -48,10 +47,8 @@ class FoePlunder extends EventEmitter{
         if(this.#autoCheckPlunder === e || e.constructor === Number()) return;
         this.#autoCheckPlunder = e;
         localStorage.setItem('autoCheckPlunder', JSON.stringify(e));    
-        if(e) this.#timeoutInterval = setInterval((()=>this.checkPlunder())(),this.checkInterval*60000);
-        else clearInterval(this.#timeoutInterval);
+        if(e) this.checkPlunderInterval();
     }
-
     #plunderableBuildings=[];
     get plunderableBuildings(){
         return this.#plunderableBuildings;
@@ -64,6 +61,10 @@ class FoePlunder extends EventEmitter{
 
     constructor(){
         super();
+                 
+        const loadedcheckInterval = localStorage.getItem('checkInterval');
+        if(loadedcheckInterval && loadedcheckInterval != 'null')
+            this.checkInterval = JSON.parse(loadedcheckInterval);
         const loadedplunderMinAmount = localStorage.getItem('plunderMinAmount');
         if(loadedplunderMinAmount && loadedplunderMinAmount != 'null')
             this.plunderMinAmount = JSON.parse(loadedplunderMinAmount);
@@ -75,10 +76,7 @@ class FoePlunder extends EventEmitter{
         const loadedautoCheckPlunder = localStorage.getItem('autoCheckPlunder');
         if(loadedautoCheckPlunder && loadedautoCheckPlunder != 'null')
             this.autoCheckPlunder = JSON.parse(loadedautoCheckPlunder);
-         
-        const loadedcheckInterval = localStorage.getItem('checkInterval');
-        if(loadedcheckInterval && loadedcheckInterval != 'null')
-            this.checkInterval = JSON.parse(loadedcheckInterval);
+
     }
     __isPlunderable(entityname){
         for (let i = 0; i < notPlunderableIDs.length; i++)
@@ -126,7 +124,7 @@ class FoePlunder extends EventEmitter{
         toast.error(`Plunder failed`)
         return 0;
     }
-    async checkPlunder(){
+    checkPlunder = async ()=>{
         await toast.promise(new Promise(async resp=>{
             FoEconsole.log(`Checking buildings to sabotage...`);
             this.plunderableBuildings=[];
@@ -157,6 +155,14 @@ class FoePlunder extends EventEmitter{
             success: 'Finished checking plunder.',
             error: 'Error while checking plunder.'
         })
+    }
+
+    checkPlunderInterval = async ()=>{
+        await this.checkPlunder();
+        if(this.autoCheckPlunder){
+            await wait(this.checkInterval*60000);
+            this.checkPlunderInterval();
+        }
     }
 }
 
