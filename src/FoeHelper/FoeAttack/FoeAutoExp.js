@@ -36,10 +36,7 @@ class FoeAutoExp extends EventEmitter{
         const loadedautoExpedition = localStorage.getItem('autoExpedition');
         if(loadedautoExpedition && loadedautoExpedition != 'null')
             this.autoExpedition = JSON.parse(loadedautoExpedition);    
-              
-        // FoEProxy.addHandler('getPlayerResources', (e)=> {
-        //     if(e.resources.guild_expedition_attempt>0 && this.autoExpedition) this.checkExpedition();
-        // })  
+        
     }
     async checkifMapUnlocked(currentMap){
         const request = requestJSON("GuildExpeditionService","getDifficulties")  
@@ -121,7 +118,6 @@ class FoeAutoExp extends EventEmitter{
     async checkExpedition(){
         if(this.#checking===true) return;
         this.#checking = true;
-
         await toast.promise(
             new Promise(async (resolve,reject)=>{
                 try {

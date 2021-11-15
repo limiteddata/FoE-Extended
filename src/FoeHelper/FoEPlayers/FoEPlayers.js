@@ -30,6 +30,7 @@ class FoePlayers extends EventEmitter{
         // get player resources from request and from game
         FoEProxy.addHandler('getPlayerResources', (e)=> this.playerResources = e.resources);
         FoERequest.addHandler('getPlayerResources', (e)=> this.playerResources = e.resources);
+        this.getResources();
     }
     async getFriendsList(){
         const playersToIgonore = this.ignorePlayers.split(/[ ,]+/);
