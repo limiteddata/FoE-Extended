@@ -6,7 +6,6 @@ const EventEmitter = require("events");
 class FoePlayers extends EventEmitter{  
     currentPlayer;
     protectedPlayers;
-    playerResources;
     #ignorePlayers = "";
 
     get ignorePlayers(){
@@ -16,6 +15,15 @@ class FoePlayers extends EventEmitter{
         if(this.#ignorePlayers === e) return;
         this.#ignorePlayers = e;
         localStorage.setItem('ignorePlayers', JSON.stringify(e));
+    }
+    #playerResources;
+    get playerResources(){
+        return this.#playerResources;
+    }
+    set playerResources(e){
+        if(this.#playerResources === e) return;
+        this.#playerResources = e;
+        this.emit('playerResources', e);
     }
 
     constructor(){

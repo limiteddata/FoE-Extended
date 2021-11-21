@@ -32,8 +32,10 @@ class FoeAttack extends EventEmitter{
                 }
             }
             const rewards = getResponseMethod(response,"collectReward");
+
             if(rewards) 
-                for (const reward of rewards[0]) FoEconsole.log(`Reward ${reward.name}`)
+                for (const reward of rewards[0]) 
+                    FoEconsole.log(`Reward ${reward.name}`)
             return -1;
         }
         FoEconsole.log("Lost first battle");
