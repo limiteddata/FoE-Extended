@@ -33,7 +33,7 @@ class FoeAutoExp extends EventEmitter{
         return this.#expAttempt;
     }
     set expAttempt(e){
-        if(e < 0 || e > 8) return;
+        if(this.#expAttempt === e || e < 0 || e > 8) return;
         this.#expAttempt = e; 
         if(this.#expAttempt>0 && this.autoExpedition && this.#checking === false) this.checkExpedition();
     }
@@ -70,7 +70,7 @@ class FoeAutoExp extends EventEmitter{
 
     }
     async checkExpedition(){
-        if(this.#checking===true) return;
+        if(this.#checking===true || this.expeditionStarted === false) return;
         this.#checking = true;
         await wait(this.timeOffset * 1000);
         await toast.promise(

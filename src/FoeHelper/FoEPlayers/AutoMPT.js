@@ -1,5 +1,7 @@
 import { FoEconsole } from "../Foeconsole/Foeconsole";
+import { FoEProxy } from "../FoeProxy";
 import { FoERequest } from "../FoeRequest";
+import { FoEPlayers } from "./FoEPlayers";
 import { FoEPlayerUtils } from "./FoePlayerUtils";
 
 const EventEmitter = require("events");
@@ -76,6 +78,16 @@ class FoeAutoMPT extends EventEmitter{
         const loadedautoTavern = localStorage.getItem('autoTavern');
         if(loadedautoTavern && loadedautoTavern != 'null')
             this.autoTavern = JSON.parse(loadedautoTavern);
+        
+        FoEProxy.addHandler('getSittingPlayersCount',(e)=>{
+            if(e[2] !== e[1]) {
+                if(FoEPlayers.currentPlayer && e[0] === FoEPlayers.currentPlayer.player_id && e[2] === e[1]){
+                    FoEPlayerUtils.CollectTavern();
+                    return;
+                }
+                FoEPlayerUtils.seatToTavern(e[0]);
+            }
+        });
     }
 }
 
