@@ -71,7 +71,6 @@ class FoePlayerUtils extends EventEmitter{
         });
     }
     async CollectTavern(){
-       
         const tavernSeats = await FoEPlayers.getTavernSeats();
         if(tavernSeats["unlockedChairs"] !== tavernSeats["occupiedSeats"]) {
             FoEconsole.log("Tavern is not fully occupied yet");
@@ -88,21 +87,25 @@ class FoePlayerUtils extends EventEmitter{
 
         FoEconsole.log("Tavern collected");
     }
-    async seatToTavern(playerid){
-        const getTavernrequest = requestJSON("FriendsTavernService","getOtherTavernState",[playerid]);
-        const tavernsData = await FoERequest.FetchRequestAsync(getTavernrequest,100);
-        if(tavernsData.unlockedChairCount != tavernsData.sittingPlayerCount && 
-            ["notFriend", "noChair", "isSitting", "noChair", "alreadyVisited"].indexOf(tavernsData["state"]) === -1 ){  
-                FoEconsole.log(`Sitting down at ${tavernsData.ownerId}`);      
+    async seatToTavern(playerid, tavernData = null){
+        if(!tavernData){
+            const getTavernrequest = requestJSON("FriendsTavernService","getOtherTavernState",[playerid]);
+            tavernData = await FoERequest.FetchRequestAsync(getTavernrequest, {delay:100});
+        } 
+        if(tavernData.unlockedChairCount != tavernData.sittingPlayerCount && 
+            ["notFriend", "noChair", "isSitting", "noChair", "alreadyVisited"].indexOf(tavernData["state"]) === -1 ){  
+                FoEconsole.log(`Sitting down at ${tavernData.ownerId}`);      
                 const sitRequest = requestJSON("FriendsTavernService","getOtherTavern",[playerid]);
-                await FoERequest.FetchRequestAsync(sitRequest,100);                               
+                await FoERequest.FetchRequestAsync(sitRequest,{delay:100});                               
         }
     }
     async seatToAllTaverns(){
         FoEconsole.log(`Started seating to taverns.`);
         await toast.promise(async ()=>{
                 const friendsList = await FoEPlayers.getFriendsList();
-                for(const player of friendsList) await this.seatToTavern(player.player_id)
+                const request = friendsList.map(player=> requestJSON("FriendsTavernService","getOtherTavernState",[player.player_id],true));
+                const responses = await FoERequest.FetchRequestAsync(request);   
+                for(const response of responses) await this.seatToTavern(response.ownerId, response)
             },
         {
             pending: 'Seating to taverns...',

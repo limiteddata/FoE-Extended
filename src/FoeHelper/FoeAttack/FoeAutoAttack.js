@@ -25,7 +25,6 @@ class FoeAutoAttack extends EventEmitter{
     }
 
     async attackAllNeighbors(){
-        console.log(FoEPlayers.protectedPlayers)
         const neighbors = (await FoEPlayers.getNeighborList()).filter(neighbor=> {
                 if(!neighbor.next_interaction_in && 
                     neighbor.canSabotage === false) {
