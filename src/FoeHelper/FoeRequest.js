@@ -32,7 +32,7 @@ class FoeRequest extends ResponseHandler{
             if(!this.isReady) throw 'Extension is not ready!';
         }
         if(delay !== 0) await wait(delay);
-        request.forEach(element => element["requestId"] = this.gameOptions.requestId++  ); 
+        request["requestId"] = this.gameOptions.requestId++;
         return new Promise( (res, rej) => {
             const channel = new MessageChannel(); 
             channel.port1.onmessage = ({data}) => {
