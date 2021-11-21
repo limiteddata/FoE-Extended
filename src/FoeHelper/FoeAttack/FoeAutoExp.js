@@ -68,7 +68,6 @@ class FoeAutoExp extends EventEmitter{
         if(loadedautoExpedition && loadedautoExpedition != 'null')
             this.autoExpedition = JSON.parse(loadedautoExpedition); 
 
-        this.ex
     }
     async checkExpedition(){
         if(this.#checking===true) return;
