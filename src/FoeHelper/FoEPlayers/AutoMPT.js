@@ -8,6 +8,7 @@ const EventEmitter = require("events");
 
 class FoeAutoMPT extends EventEmitter{  
     #autoMotivateNeighbors=false;
+    #intervalMNeighbors=null;
     get autoMotivateNeighbors(){
         return this.#autoMotivateNeighbors;
     }
@@ -17,9 +18,17 @@ class FoeAutoMPT extends EventEmitter{
         localStorage.setItem('autoMotivateNeighbors', JSON.stringify(e));
         if(e){
             FoEconsole.log(`Auto motivate neighbors active`);
-            FoEPlayerUtils.MotivateNeighbors();
+            (async ()=>{
+                await FoEPlayerUtils.MotivateNeighbors();
+                // call after 24h+5min
+                this.#intervalMNeighbors = setInterval(async () => {
+                    await FoEPlayerUtils.MotivateNeighbors();
+                }, 86700000 );
+            })();
         }
+        else clearInterval(this.#intervalMNeighbors);
     }
+    #intervalMCM=null;
     #autoMotivateClanMembers=false;
     get autoMotivateClanMembers(){
         return this.#autoMotivateClanMembers;
@@ -30,11 +39,19 @@ class FoeAutoMPT extends EventEmitter{
         localStorage.setItem('autoMotivateClanMembers', JSON.stringify(e));
         if(e){
             FoEconsole.log(`Auto motivate clan members active`);
-            FoEPlayerUtils.MotivateClanMembers();
+            (async ()=>{
+                await FoEPlayerUtils.MotivateClanMembers();
+                // call after 24h+5min
+                this.#intervalMCM = setInterval(async () => {
+                    await FoEPlayerUtils.MotivateClanMembers();
+                }, 86700000 );
+            })();
         }
+        else clearInterval(this.#intervalMCM);
     }
 
     #autoMotivateFriends=false;
+    #intervalMFriends=null;
     get autoMotivateFriends(){
         return this.#autoMotivateFriends;
     }
@@ -44,8 +61,15 @@ class FoeAutoMPT extends EventEmitter{
         localStorage.setItem('autoMotivateFriends', JSON.stringify(e));
         if(e){
             FoEconsole.log(`Auto motivate friends active`);
-            FoEPlayerUtils.MotivateFriends();
+            (async ()=>{
+                await FoEPlayerUtils.MotivateFriends();
+                // call after 24h+5min
+                this.#intervalMFriends = setInterval(async () => {
+                    await FoEPlayerUtils.MotivateFriends();
+                }, 86700000 );
+            })();
         }
+        else clearInterval(this.#intervalMFriends);
     }
     #autoTavern=false;
     get autoTavern(){
