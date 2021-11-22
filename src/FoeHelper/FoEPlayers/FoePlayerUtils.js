@@ -51,9 +51,9 @@ class FoePlayerUtils extends EventEmitter{
         FoEconsole.log(`Started motivating friends.`);
         await toast.promise(async ()=>this.MotivatePlayers(players),
         {
-            pending: 'Motivating clan members...',
-            success: 'Finished motivating clan members.',
-            error: 'Error while motivating clan members.'
+            pending: 'Motivating friends...',
+            success: 'Finished motivating friends.',
+            error: 'Error while motivating friends.'
         });
     }
     async MotivateNeighbors(){
