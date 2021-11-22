@@ -114,7 +114,7 @@ class FoeGB extends EventEmitter{
             // get all the GBs
             requestJSON("GreatBuildingsService","getOtherPlayerOverview",[playerId], true)
         ];
-        const response = await FoERequest.FetchRequestAsync(request,{raw:true});       
+        const response = await FoERequest.FetchRequestAsync(request,{raw:true});    
         const entities = getResponseMethod(response, "visitPlayer")['city_map']['entities'];
         const gbs = getResponseMethod(response, "getOtherPlayerOverview");
         return gbs.filter(building => {
@@ -130,6 +130,7 @@ class FoeGB extends EventEmitter{
     }
 
     async getGBuildingsRanks(buildings, playerId){
+        if(!buildings || buildings.length===0) return [];
         const request = buildings.map(building=> requestJSON("GreatBuildingsService","getConstruction",[building.entity_id,playerId], true));
         let response = await FoERequest.FetchRequestAsync(request);
         response = Array.isArray(response) ? response: [response];
@@ -141,44 +142,47 @@ class FoeGB extends EventEmitter{
     }
 
     getStealableGBPlaces = async (player)=>{
-        const openedBuildings = await this.getOpenedGB(player.player_id);
-        const buildingsWithRanks = await this.getGBuildingsRanks(openedBuildings, player.player_id);
-
-        for(const bldWithRanks of buildingsWithRanks){
-            const FPLeft = bldWithRanks.building.max_progress - bldWithRanks.building.current_progress;
-            for(const rank of bldWithRanks.rankings){
-                if(rank.player.is_self === true)  break;
-                if(rank.player.player_id === player.player_id)  continue;
-                if(!rank.reward) continue;
-                if(!rank.reward.strategy_point_amount) continue;
-
-                const rankWithArcBonus = Math.round(rank.reward.strategy_point_amount * ((this.arcBonus+100) / 100) );
-                
-                const FPNeeded = Math.round(FPLeft / 2); 
-                if(rank.forge_points) FPNeeded += Math.round(rank.forge_points/2);
-                if(FPNeeded >= rankWithArcBonus) continue;
-
-                if(bldWithRanks.building.current_progress + FPNeeded >= bldWithRanks.building.max_progress) continue;
-                const profit = rankWithArcBonus-FPNeeded;
-                if(profit < this.minProfit) continue;  
-                const minimumReturnProfit = Math.round( (this.minReturnProfit/100) * FPNeeded );
-                if(profit < minimumReturnProfit) continue;
-
-                const newBld = {
-                    player: { ...player },
-                    building: { ...bldWithRanks.building },
-                    other: {
-                        fp_needed: FPNeeded,
-                        rankWithArcBonus: rankWithArcBonus,
-                        arcBonus: this.arcBonus,
-                        rank: rank.rank,
-                        profit: profit
+        try {
+            const openedBuildings = await this.getOpenedGB(player.player_id);
+            const buildingsWithRanks = await this.getGBuildingsRanks(openedBuildings, player.player_id);
+            for(const bldWithRanks of buildingsWithRanks){
+                const FPLeft = bldWithRanks.building.max_progress - bldWithRanks.building.current_progress;
+                for(const rank of bldWithRanks.rankings){
+                    if(rank.player.is_self === true)  break;
+                    if(rank.player.player_id === player.player_id)  continue;
+                    if(!rank.reward) continue;
+                    if(!rank.reward.strategy_point_amount) continue;
+    
+                    const rankWithArcBonus = Math.round(rank.reward.strategy_point_amount * ((this.arcBonus+100) / 100) );
+                    
+                    const FPNeeded = Math.round(FPLeft / 2); 
+                    if(rank.forge_points) FPNeeded += Math.round(rank.forge_points/2);
+                    if(FPNeeded >= rankWithArcBonus) continue;
+    
+                    if(bldWithRanks.building.current_progress + FPNeeded >= bldWithRanks.building.max_progress) continue;
+                    const profit = rankWithArcBonus-FPNeeded;
+                    if(profit < this.minProfit) continue;  
+                    const minimumReturnProfit = Math.round( (this.minReturnProfit/100) * FPNeeded );
+                    if(profit < minimumReturnProfit) continue;
+    
+                    const newBld = {
+                        player: { ...player },
+                        building: { ...bldWithRanks.building },
+                        other: {
+                            fp_needed: FPNeeded,
+                            rankWithArcBonus: rankWithArcBonus,
+                            arcBonus: this.arcBonus,
+                            rank: rank.rank,
+                            profit: profit
+                        }
                     }
+                    this.foundBuildings = [...this.foundBuildings, newBld];
+                    FoEconsole.log(`\n\n${player.name} #${player.rank}\n${bldWithRanks.building.name} lvl:${bldWithRanks.building.level}\nPlace ${rank.rank} FP: ${FPNeeded}(${this.arcBonus}:${rankWithArcBonus}) profit: ${profit}`);
+                    
                 }
-                this.foundBuildings = [...this.foundBuildings, newBld];
-                FoEconsole.log(`\n\n${player.name} #${player.rank}\n${bldWithRanks.building.name} lvl:${bldWithRanks.building.level}\nPlace ${rank.rank} FP: ${FPNeeded}(${this.arcBonus}:${rankWithArcBonus}) profit: ${profit}`);
-                
             }
+        } catch (error) {
+            console.log(error)
         }
     }
 

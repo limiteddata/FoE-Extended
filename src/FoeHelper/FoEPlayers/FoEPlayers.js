@@ -91,7 +91,7 @@ class FoePlayers extends EventEmitter{
     }
     async getInventory(){
         const request = requestJSON("InventoryService","getItems");
-        const response = await FoERequest.FetchRequestAsync(request);    
+        const response = await FoERequest.FetchRequestAsync(request,{delay:100});    
         return response;
     }
     async getTotalFP(){
