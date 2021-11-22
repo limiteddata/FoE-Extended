@@ -28,7 +28,7 @@ class FoePlayers extends EventEmitter{
 
     constructor(){
         super();
-
+        this.getResources();
         const loadedignorePlayers = localStorage.getItem('ignorePlayers');
         if(loadedignorePlayers && loadedignorePlayers != 'null')
             this.ignorePlayers = JSON.parse(loadedignorePlayers);
@@ -38,7 +38,6 @@ class FoePlayers extends EventEmitter{
         // get player resources from request and from game
         FoEProxy.addHandler('getPlayerResources', (e)=> this.playerResources = e.resources);
         FoERequest.addHandler('getPlayerResources', (e)=> this.playerResources = e.resources);
-        this.getResources();
     }
     async getFriendsList(){
         const playersToIgonore = this.ignorePlayers.split(/[ ,]+/);
@@ -89,6 +88,20 @@ class FoePlayers extends EventEmitter{
         const request = requestJSON("ResourceService","getPlayerResources");
         this.playerResources = (await FoERequest.FetchRequestAsync(request)).resources;
         return this.playerResources;
+    }
+    async getInventory(){
+        const request = requestJSON("InventoryService","getItems");
+        const response = await FoERequest.FetchRequestAsync(request);    
+        return response;
+    }
+    async getTotalFP(){
+        const playerInventory = await this.getInventory();
+        let totalFP = this.playerResources.strategy_points;  
+        for (const item of playerInventory){
+            if(["small_forgepoints", "medium_forgepoints", "large_forgepoints"].indexOf(item.itemAssetName) !== -1)
+                totalFP += (item.inStock * item['item']['resource_package']['gain']);
+        }
+        return totalFP;
     }
 }
 

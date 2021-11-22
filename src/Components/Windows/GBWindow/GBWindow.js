@@ -60,15 +60,7 @@ export default function GBWindow({open,setOpen}) {
 
                     <button 
                         className='orange-button'
-                        onClick={async ()=> {
-                        await toast.promise(
-                            FoEGB.checkForGBRanks(),
-                            {
-                              pending: 'Checking GB ranks...',
-                              success: 'Finished checking GB ranks.',
-                              error: 'Error while checking GB ranks.'
-                            }
-                        )}}>Check Neighbors</button>
+                        onClick={FoEGB.checkForGBRanks}>Check Neighbors</button>
                 </div>
                 <div className='col'>
                     <Input label={'Arc bonus'}
