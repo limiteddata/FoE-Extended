@@ -11,8 +11,24 @@ class FoeRequest extends ResponseHandler{
         requestId:0,
     };
     _this;
+
+    #requestsDelay = 700;
+    get requestsDelay(){
+        return this.#requestsDelay;
+    }
+    set requestsDelay(e){
+        if(this.#requestsDelay === e) return;
+        this.#requestsDelay = e;
+        localStorage.setItem('requestsDelay', JSON.stringify(e));
+    }
+
     constructor(){
         super();
+
+        const loadedrequestsDelay = localStorage.getItem('requestsDelay');
+        if(loadedrequestsDelay && loadedrequestsDelay != 'null')
+        this.requestsDelay = JSON.parse(loadedrequestsDelay); 
+
         let scripts = document.getElementsByTagName('script');
         fetch(scripts[scripts.length-1].src).then(resp=>resp.text()).then(responseText=>{
             this.gameOptions.secret = responseText.split("VERSION_SECRET=\"")[1].split("\";")[0];
@@ -26,7 +42,7 @@ class FoeRequest extends ResponseHandler{
         return md5(data).toString(16).slice(0, 10);
     }
 
-    FetchRequestAsync = async (request, {delay=700, raw=false}={})=>{
+    FetchRequestAsync = async (request, {delay=this.requestsDelay, raw=false}={})=>{
         if(!this.isReady){
             await wait(1500);
             if(!this.isReady) throw 'Extension is not ready!';
