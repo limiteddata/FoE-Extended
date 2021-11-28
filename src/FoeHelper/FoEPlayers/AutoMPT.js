@@ -96,14 +96,13 @@ class FoeAutoMPT extends EventEmitter{
         const loadedautoTavern = localStorage.getItem('autoTavern');
         if(loadedautoTavern && loadedautoTavern != 'null')
             this.autoTavern = JSON.parse(loadedautoTavern);
-        
-        FoEProxy.addHandler('getSittingPlayersCount',(e)=>{
+        FoEProxy.addHandler('getSittingPlayersCount',async (e)=>{
             if(e[2] !== e[1]) {
                 if(FoEPlayers.currentPlayer && e[0] === FoEPlayers.currentPlayer.player_id && e[2] === e[1]){
-                    FoEPlayerUtils.CollectTavern();
+                    await FoEPlayerUtils.CollectTavern();
                     return;
                 }
-                FoEPlayerUtils.seatToTavern(e[0]);
+                await FoEPlayerUtils.seatToTavern(e[0]);
             }
         });
     }
