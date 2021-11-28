@@ -189,7 +189,7 @@ class FoeGB extends EventEmitter{
     async CheckBuildings(playerList){
         this.foundBuildings=[];
         for(const player of playerList ){
-            if(player.is_active) await this.getStealableGBPlaces(player);
+            if(player.is_active && player.has_great_building) await this.getStealableGBPlaces(player);
         }
         FoEconsole.log('Finished scanning buildings');
     }
