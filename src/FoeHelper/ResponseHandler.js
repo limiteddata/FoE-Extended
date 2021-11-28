@@ -14,7 +14,7 @@ export default class ResponseHandler{
         const newHandlers = this.handlers[handler.responseMethod].filter(hd=> hd.id !== handler.id)
         this.handlers[handler.responseMethod] = newHandlers;
     } 
-    handleCallbacks(requestMethod,data){
+    handleCallbacks = (requestMethod,data)=>{
         try {
             if(!this.handlers.hasOwnProperty(requestMethod) ) return;
             for (let x = 0; x < this.handlers[requestMethod].length; x++) 

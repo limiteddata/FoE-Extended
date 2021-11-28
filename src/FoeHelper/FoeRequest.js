@@ -26,7 +26,7 @@ class FoeRequest extends ResponseHandler{
         return md5(data).toString(16).slice(0, 10);
     }
 
-    FetchRequestAsync = async (request, {delay=600, raw=false}={})=>{
+    FetchRequestAsync = async (request, {delay=700, raw=false}={})=>{
         if(!this.isReady){
             await wait(1500);
             if(!this.isReady) throw 'Extension is not ready!';
@@ -40,7 +40,7 @@ class FoeRequest extends ResponseHandler{
               if (data.error) rej(data.error);
               else {
                     let response = data.result;
-                    for (let i = 0; i < response.length; i++) this.handleCallbacks(response[i].requestMethod,response[i].responseData);
+                    for (let i = 0; i < response.length; i++) this.handleCallbacks(response[i].requestClass, response[i].requestMethod,response[i].responseData);
                     res( raw ? response : getResponseMethod(response, request[0]['requestMethod']) );
               }
             };
