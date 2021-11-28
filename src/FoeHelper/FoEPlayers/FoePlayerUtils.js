@@ -20,12 +20,12 @@ class FoePlayerUtils extends EventEmitter{
         });
     }
     async MotivatePlayers(playerList){
-        for (const player of playerList){
-            if(player.next_interaction_in || player.accepted === false) continue;
+        const request = playerList.map(player=>{
             FoEconsole.log(`Motivating player: ${player.name}`);
-            const request = requestJSON("OtherPlayerService","polivateRandomBuilding",[player.player_id]);
-            await FoERequest.FetchRequestAsync(request)
-        }   
+            return requestJSON("OtherPlayerService","polivateRandomBuilding",[player.player_id],true);
+        });
+        const response = await FoERequest.FetchRequestAsync(request);  
+        console.log(response);
         FoEconsole.log(`Finished motivating players.`);
     }
     async MotivateClanMembers(){ 

@@ -20,10 +20,8 @@ class FoeAutoMPT extends EventEmitter{
             FoEconsole.log(`Auto motivate neighbors active`);
             (async ()=>{
                 await FoEPlayerUtils.MotivateNeighbors();
-                // call after 24h+5min
-                this.#intervalMNeighbors = setInterval(async () => {
-                    await FoEPlayerUtils.MotivateNeighbors();
-                }, 86700000 );
+                // call after 24h+2min
+                this.#intervalMNeighbors = setInterval(async () => await FoEPlayerUtils.MotivateNeighbors(), 86520000 );
             })();
         }
         else clearInterval(this.#intervalMNeighbors);
@@ -41,10 +39,8 @@ class FoeAutoMPT extends EventEmitter{
             FoEconsole.log(`Auto motivate clan members active`);
             (async ()=>{
                 await FoEPlayerUtils.MotivateClanMembers();
-                // call after 24h+5min
-                this.#intervalMCM = setInterval(async () => {
-                    await FoEPlayerUtils.MotivateClanMembers();
-                }, 86700000 );
+                // call after 24h+2min
+                this.#intervalMCM = setInterval(async () => await FoEPlayerUtils.MotivateClanMembers(), 86520000 );
             })();
         }
         else clearInterval(this.#intervalMCM);
@@ -63,10 +59,8 @@ class FoeAutoMPT extends EventEmitter{
             FoEconsole.log(`Auto motivate friends active`);
             (async ()=>{
                 await FoEPlayerUtils.MotivateFriends();
-                // call after 24h+5min
-                this.#intervalMFriends = setInterval(async () => {
-                    await FoEPlayerUtils.MotivateFriends();
-                }, 86700000 );
+                // call after 24h+2min
+                this.#intervalMFriends = setInterval(async () => await FoEPlayerUtils.MotivateFriends(), 86520000 );
             })();
         }
         else clearInterval(this.#intervalMFriends);
