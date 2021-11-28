@@ -5,6 +5,7 @@ import { requestJSON, wait } from "../Utils";
 import { hasDeepValue } from "has-deep-value";
 import { notPlunderableIDs } from "./NotPlunderableBuildings";
 import { toast } from 'react-toastify';
+import { FoEAutoAttack } from "../FoeAttack/FoeAutoAttack";
 
 const EventEmitter = require("events");
 
@@ -38,6 +39,16 @@ class FoePlunder extends EventEmitter{
         this.#checkInterval = Number(e);
         localStorage.setItem('checkInterval', JSON.stringify(e));
     }
+    
+    #attackbefore=false;
+    get attackbefore(){
+        return this.#attackbefore;
+    }
+    set attackbefore(e){
+        if(this.#attackbefore === e) return;
+        this.#attackbefore = e;
+        localStorage.setItem('attackbefore', JSON.stringify(e));    
+    } 
 
     #autoCheckPlunder=false;
     get autoCheckPlunder(){
@@ -61,10 +72,15 @@ class FoePlunder extends EventEmitter{
 
     constructor(){
         super();
-                 
+
+        const loadedattackbefore = localStorage.getItem('attackbefore');
+        if(loadedattackbefore && loadedattackbefore != 'null')
+            this.attackbefore = JSON.parse(loadedattackbefore);
+
         const loadedcheckInterval = localStorage.getItem('checkInterval');
         if(loadedcheckInterval && loadedcheckInterval != 'null')
             this.checkInterval = JSON.parse(loadedcheckInterval);
+
         const loadedplunderMinAmount = localStorage.getItem('plunderMinAmount');
         if(loadedplunderMinAmount && loadedplunderMinAmount != 'null')
             this.plunderMinAmount = JSON.parse(loadedplunderMinAmount);
@@ -76,7 +92,7 @@ class FoePlunder extends EventEmitter{
         const loadedautoCheckPlunder = localStorage.getItem('autoCheckPlunder');
         if(loadedautoCheckPlunder && loadedautoCheckPlunder != 'null')
             this.autoCheckPlunder = JSON.parse(loadedautoCheckPlunder);
-
+            
     }
     __isPlunderable(entityname){
         for (let i = 0; i < notPlunderableIDs.length; i++)
@@ -126,23 +142,27 @@ class FoePlunder extends EventEmitter{
     }
     checkPlunder = async ()=>{
         await toast.promise(new Promise(async resp=>{
+            await FoEAutoAttack.attackAllNeighbors();
             FoEconsole.log(`Checking buildings to sabotage...`);
             this.plunderableBuildings=[];
-            const neighbors = await FoEPlayers.getNeighborList();
-    
-            for (const neighbor of neighbors){
-                if(neighbor.canSabotage !== true) continue;
-                const neighborCity = await FoEPlayers.visitPlayerCity(neighbor.player_id);
+            const neighbors = (await FoEPlayers.getNeighborList()).filter(neighbor=>neighbor.canSabotage === true);
+            const request = neighbors.map(neighbor=>requestJSON("OtherPlayerService","visitPlayer",[neighbor.player_id],true));
+            if (!request || request.length === 0) {
+                resp();
+                return;
+            }
+            const response = await FoERequest.FetchRequestAsync(request);            
+            for (const neighborCity of response){
                 const bestBuilding = this.__getBestPlunderableBuilding(neighborCity['city_map']['entities'])
                 if(bestBuilding === null) continue;
                 const newBuilding = {
                     building_id: bestBuilding.id,
                     player_id: bestBuilding.player_id,
-                    player_name: neighbor.name,
-                    player_rank: neighbor.rank,
+                    player_name: neighborCity.other_player.name,
+                    player_rank: neighborCity.other_player.rank,
                     cityentity_id: bestBuilding.cityentity_id,
                     fp:bestBuilding.state.current_product.product.resources.strategy_points
-                }
+                };
                 FoEconsole.log(`\n\n${newBuilding.player_name} #${newBuilding.player_rank}\nBuilding: ${newBuilding.cityentity_id}(id:${newBuilding.building_id})  -->  ${newBuilding.fp}pf`) 
                 this.plunderableBuildings = [...this.plunderableBuildings,newBuilding];
                 if(this.autoPlunder) await this.plunderBuilding(newBuilding.player_id, newBuilding.building_id);
