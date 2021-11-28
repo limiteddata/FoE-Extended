@@ -42,7 +42,7 @@ class FoeAutoExp extends EventEmitter{
         // add if expedition active check
         this.getOverview(0).then((overview)=>{
             if(overview.state === 'active' && overview.isPlayerParticipating && overview.isGuildParticipating )
-                this.expeditionStarted = (overview.progress.isMapCompleted === true && overview.progress.difficulty === 3);
+                this.expeditionStarted = (overview.progress.isMapCompleted !== true && overview.progress.difficulty !== 3);
             else{
                 // if expedition is inactive set a timeout until the next change
                 const nextExpeditionAt = ((overview.nextStateTime + this.timeOffset) * 1000) - Date.now();
@@ -51,6 +51,9 @@ class FoeAutoExp extends EventEmitter{
                     this.checkExpedition();
                 },nextExpeditionAt);
             }
+            const loadedautoExpedition = localStorage.getItem('autoExpedition');
+            if(loadedautoExpedition && loadedautoExpedition != 'null')
+            this.autoExpedition = JSON.parse(loadedautoExpedition); 
         });
         // increment expedition attempts
         FoEProxy.addHandler('getPlayerAutoRefills',(e)=>{
@@ -63,11 +66,6 @@ class FoeAutoExp extends EventEmitter{
             },nextRefillAt);
         });
         FoEPlayers.on('playerResources',(e)=>this.expAttempt = e.guild_expedition_attempt);
-
-        const loadedautoExpedition = localStorage.getItem('autoExpedition');
-        if(loadedautoExpedition && loadedautoExpedition != 'null')
-            this.autoExpedition = JSON.parse(loadedautoExpedition); 
-
     }
     async checkExpedition(){
         if(this.#checking===true || this.expeditionStarted === false) return;
