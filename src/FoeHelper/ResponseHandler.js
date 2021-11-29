@@ -3,22 +3,28 @@ import { v4 as uuid} from 'uuid';
 export default class ResponseHandler{
     constructor(){}
     handlers = {};
-    addHandler = (responseMethod,callback)=>{
-        if(!this.handlers[responseMethod]) this.handlers[responseMethod] = [];
-        const handler = {id: uuid(), responseMethod: responseMethod, callback:callback}
-        this.handlers[responseMethod].push( handler )
+    addHandler = (requestClass, requestMethod,callback)=>{
+        if(!this.handlers[`${requestClass}:${requestMethod}`]) 
+            this.handlers[`${requestClass}:${requestMethod}`] = [];
+        const handler = {
+            id: uuid(), 
+            requestClass: requestClass, 
+            requestMethod: requestMethod, 
+            callback: callback
+        }
+        this.handlers[`${requestClass}:${requestMethod}`].push( handler )
         return handler;
     }
     removeHandler = (handler)=>{
-        if(!this.handlers[handler.responseMethod]) return;
-        const newHandlers = this.handlers[handler.responseMethod].filter(hd=> hd.id !== handler.id)
-        this.handlers[handler.responseMethod] = newHandlers;
+        if(!this.handlers[`${handler.requestClass}:${handler.requestMethod}`]) return;
+        const newHandlers = this.handlers[`${handler.requestClass}:${handler.requestMethod}`].filter(hd=> hd.id !== handler.id)
+        this.handlers[`${handler.requestClass}:${handler.requestMethod}`] = newHandlers;
     } 
-    handleCallbacks = (requestMethod,data)=>{
+    handleCallbacks = (requestClass, requestMethod, responseData)=>{
         try {
-            if(!this.handlers.hasOwnProperty(requestMethod) ) return;
-            for (let x = 0; x < this.handlers[requestMethod].length; x++) 
-                this.handlers[requestMethod][x].callback(data);
+            if(!this.handlers.hasOwnProperty(`${requestClass}:${requestMethod}`) ) return;
+            for (let x = 0; x < this.handlers[`${requestClass}:${requestMethod}`].length; x++) 
+                this.handlers[`${requestClass}:${requestMethod}`][x].callback(responseData);
         } catch (error) {
             console.log(error)
         }

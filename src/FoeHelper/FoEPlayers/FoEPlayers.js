@@ -33,11 +33,11 @@ class FoePlayers extends EventEmitter{
         if(loadedignorePlayers && loadedignorePlayers != 'null')
             this.ignorePlayers = JSON.parse(loadedignorePlayers);
 
-        FoEProxy.addHandler('getData',(e)=> this.currentPlayer = e.user_data)
-        FoEProxy.addHandler('getCityProtections',(e)=> this.protectedPlayers = e.map(player=>player.playerId));
+        FoEProxy.addHandler('StartupService', 'getData',(e)=> this.currentPlayer = e.user_data)
+        FoEProxy.addHandler('OtherPlayerService', 'getCityProtections',(e)=> this.protectedPlayers = e.map(player=>player.playerId));
         // get player resources from request and from game
-        FoEProxy.addHandler('getPlayerResources', (e)=> this.playerResources = e.resources);
-        FoERequest.addHandler('getPlayerResources', (e)=> this.playerResources = e.resources);
+        FoEProxy.addHandler('ResourceService', 'getPlayerResources', (e)=> this.playerResources = e.resources);
+        FoERequest.addHandler('ResourceService', 'getPlayerResources', (e)=> this.playerResources = e.resources);
     }
     async getFriendsList(){
         const playersToIgonore = this.ignorePlayers.split(/[ ,]+/);

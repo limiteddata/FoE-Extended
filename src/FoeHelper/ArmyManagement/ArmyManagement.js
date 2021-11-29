@@ -45,7 +45,7 @@ class ArmyManagement extends EventEmitter{
             this.gvgArmy = JSON.parse(loadedGvGArmy);
         new Promise(async (res,err)=>{
             this.armyTypes = await this.getArmyType();
-            FoEProxy.addHandler('getArmyInfo', this.__sortArmy) 
+            FoEProxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', this.__sortArmy) 
             this.updateArmy();
             res();
         }).then();

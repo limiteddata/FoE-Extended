@@ -96,7 +96,7 @@ class FoeAutoMPT extends EventEmitter{
         const loadedautoTavern = localStorage.getItem('autoTavern');
         if(loadedautoTavern && loadedautoTavern != 'null')
             this.autoTavern = JSON.parse(loadedautoTavern);
-        FoEProxy.addHandler('getSittingPlayersCount',async (e)=>{
+        FoEProxy.addHandler('FriendsTavernService', 'getSittingPlayersCount',async (e)=>{
             if(e[2] !== e[1]) {
                 if(FoEPlayers.currentPlayer && e[0] === FoEPlayers.currentPlayer.player_id && e[2] === e[1]){
                     await FoEPlayerUtils.CollectTavern();

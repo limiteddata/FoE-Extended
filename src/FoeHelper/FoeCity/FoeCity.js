@@ -73,11 +73,11 @@ class FoeCity extends EventEmitter{
         if(loadedmanualBuildings && loadedmanualBuildings != 'null')
             this.manualBuildings = JSON.parse(loadedmanualBuildings);
 
-        FoEProxy.addHandler('getData', e => this.entities=e.city_map.entities);
-        FoEProxy.addHandler('cancelProduction', e => this.updateEntities(e.updatedEntities));
-        FoEProxy.addHandler('startProduction', e => this.updateEntities(e.updatedEntities));
-        FoEProxy.addHandler('completeProduction', e => this.updateEntities([e]));
-        FoEProxy.addHandler('placeBuilding', e => this.entities.push(e) );
+        FoEProxy.addHandler('StartupService', 'getData', e => this.entities=e.city_map.entities);
+        FoEProxy.addHandler('CityProductionService', 'cancelProduction', e => this.updateEntities(e.updatedEntities));
+        FoEProxy.addHandler('CityProductionService', 'startProduction', e => this.updateEntities(e.updatedEntities));
+        FoEProxy.addHandler('CityProductionService', 'completeProduction', e => this.updateEntities([e]));
+        FoEProxy.addHandler('CityMapService', 'placeBuilding', e => this.entities.push(e) );
         
         const loadedGoodsOption = localStorage.getItem('defaultGoodsOption');
         if(loadedGoodsOption && loadedGoodsOption != 'null')

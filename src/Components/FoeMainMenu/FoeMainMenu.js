@@ -27,8 +27,8 @@ const production = urlResolver.resolve('/src/assets/img/production.png')
 export default function FoeMainMenu() {
     useEffect(() => {
         const gameUrl = globalThis.location.href; 
-        FoEProxy.addHandler("Error",()=> globalThis.window.location.href = gameUrl);
-        FoEProxy.addHandler("Redirect",()=> globalThis.window.location.href = gameUrl);
+        FoEProxy.addHandler("Error", '', (e)=> globalThis.window.location.href = gameUrl);
+        FoEProxy.addHandler("Redirect", '', (e)=> globalThis.window.location.href = gameUrl);
     }, [])
     return (
         <MainMenu>           

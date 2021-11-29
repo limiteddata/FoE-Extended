@@ -56,7 +56,7 @@ class FoeAutoExp extends EventEmitter{
             this.autoExpedition = JSON.parse(loadedautoExpedition); 
         });
         // increment expedition attempts
-        FoEProxy.addHandler('getPlayerAutoRefills',(e)=>{
+        FoEProxy.addHandler('ResourceService', 'getPlayerAutoRefills',(e)=>{
             const nextRefillAt = ((e.resources.guild_expedition_attempt + this.refillInterval + this.timeOffset) * 1000) - Date.now();
             setTimeout(()=>{
                 this.expAttempt++;

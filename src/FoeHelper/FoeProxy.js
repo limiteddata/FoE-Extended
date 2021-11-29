@@ -41,10 +41,10 @@ class FoeProxy extends ResponseHandler{
         const checkResponse = (response)=>{
             if(this.debug) console.log(response);
             for (let i = 0; i < response.length; i++) { 
-                if(!response[i]['requestMethod'] && !response[i]['responseData'])
-                    this.handleCallbacks(response[i]['__class__'], response[i]);
+                if(!response[i]['requestClass'] && !response[i]['requestMethod'] && !response[i]['responseData'])
+                    this.handleCallbacks(response[i]['__class__'], '',response[i]);
                 else 
-                    this.handleCallbacks(response[i]['requestMethod'],response[i]['responseData']);
+                    this.handleCallbacks(response[i]['requestClass'], response[i]['requestMethod'], response[i]['responseData']);
             }
         }
     }
