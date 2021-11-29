@@ -153,8 +153,8 @@ class FoeAutoExp extends EventEmitter{
     async getOverview(delay = 400){
         const request = requestJSON("GuildExpeditionService","getOverview")  
         const response = await FoERequest.FetchRequestAsync(request, {delay:delay});
-        if(!response.progress.hasOwnProperty('currentEntityId')) response.progress['currentEntityId'] = 0;
-        if(!response.progress.hasOwnProperty('difficulty')) response.progress['difficulty'] = 0;
+        if(response.state === 'active' && !response.progress.hasOwnProperty('currentEntityId')) response.progress['currentEntityId'] = 0;
+        if(response.state === 'active' && !response.progress.hasOwnProperty('difficulty')) response.progress['difficulty'] = 0;
         return response;
     }
     async changetoNextMap(nextmap){
