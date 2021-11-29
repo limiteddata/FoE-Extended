@@ -23,7 +23,7 @@ class FoeGVG extends EventEmitter{
         localStorage.setItem('autoAttackGVG', JSON.stringify(e));
         if(e){
             this.attackAllGVG();
-            if(this.#proxy === null) this.#proxy = FoEProxy.addHandler('changeProvince',this.__proxyHandler__);
+            if(this.#proxy === null) this.#proxy = FoEProxy.addHandler('ClanBattleService', 'changeProvince',this.__proxyHandler__);
         }
         else FoEProxy.removeHandler(this.#proxy);
     }
@@ -38,7 +38,7 @@ class FoeGVG extends EventEmitter{
         localStorage.setItem('autoDefendGVG', JSON.stringify(e));
         if(e){
             this.defendAllGVG();
-            if(this.#proxy === null) this.#proxy = FoEProxy.addHandler('changeProvince',this.__proxyHandler__);
+            if(this.#proxy === null) this.#proxy = FoEProxy.addHandler('ClanBattleService', 'changeProvince',this.__proxyHandler__);
         }
         else FoEProxy.removeHandler(this.#proxy);
     }
