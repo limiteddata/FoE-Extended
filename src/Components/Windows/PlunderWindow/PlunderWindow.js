@@ -52,6 +52,9 @@ export default function PlunderWindow({open,setOpen}) {
                     }}>Check Plunder</button>
                 </div>
                 <div className='flexCol'>
+                    <Checkbox label={'Attack before check'}                        
+                        onChanged={(e)=> FoEPlunder.attackbefore = e}
+                        checked={FoEPlunder.attackbefore}/>     
                     <Checkbox label={'Auto plunder'}                        
                         onChanged={(e)=> FoEPlunder.autoPlunder = e}
                         checked={FoEPlunder.autoPlunder}/>

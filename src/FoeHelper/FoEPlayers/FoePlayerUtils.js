@@ -10,52 +10,74 @@ class FoePlayerUtils extends EventEmitter{
     constructor(){
         super();
     }
+    CheckPlayerList(playerList){
+        return playerList.filter(player=> {
+            if(!player.next_interaction_in) {
+                if(player.accepted) return player.accepted === true;
+                return true;
+            }
+            return false; 
+        });
+    }
     async MotivatePlayers(playerList){
-        for (const player of playerList){
-            if(player['next_interaction_in'] || player['accepted'] === false) continue;
+        const request = playerList.map(player=>{
             FoEconsole.log(`Motivating player: ${player.name}`);
-            const request = requestJSON("OtherPlayerService","polivateRandomBuilding",[player.player_id]);
-            await FoERequest.FetchRequestAsync(request)
-        }   
+            return requestJSON("OtherPlayerService","polivateRandomBuilding",[player.player_id],true);
+        });
+        const response = await FoERequest.FetchRequestAsync(request);  
+        console.log(response);
         FoEconsole.log(`Finished motivating players.`);
     }
-    async MotivateClanMembers(){
+    async MotivateClanMembers(){ 
+        const players = this.CheckPlayerList(await FoEPlayers.getClanMemberList());
+        if(players.length === 0) {
+            FoEconsole.log('No clan members to motivate');
+            return;
+        }
         FoEconsole.log(`Started motivating clan members.`);
-        await toast.promise(this.MotivatePlayers(await FoEPlayers.getClanMemberList()),
+        await toast.promise(async ()=>this.MotivatePlayers(players),
         {
             pending: 'Motivating clan members...',
             success: 'Finished motivating clan members.',
             error: 'Error while motivating clan members.'
-        })
+        });
     }
-    async MotivateFriends(){
+    async MotivateFriends(){  
+        const players = this.CheckPlayerList(await FoEPlayers.getFriendsList());
+        if(players.length === 0) {
+            FoEconsole.log('No friends to motivate');
+            return;
+        }
         FoEconsole.log(`Started motivating friends.`);
-        await toast.promise(this.MotivatePlayers(await FoEPlayers.getFriendsList()),
-            {
-                pending: 'Motivating friends...',
-                success: 'Finished motivating friends.',
-                error: 'Error while motivating friends.'
-            })
+        await toast.promise(async ()=>this.MotivatePlayers(players),
+        {
+            pending: 'Motivating friends...',
+            success: 'Finished motivating friends.',
+            error: 'Error while motivating friends.'
+        });
     }
     async MotivateNeighbors(){
+        const players = this.CheckPlayerList(await FoEPlayers.getNeighborList());
+        if(players.length === 0) {
+            FoEconsole.log('No neighbors to motivate');
+            return;
+        }
         FoEconsole.log(`Started motivating neighbors.`);
-        await toast.promise(this.MotivatePlayers(await FoEPlayers.getNeighborList()),
+        await toast.promise(async ()=>this.MotivatePlayers(players),
         {
-            pending: 'Motivating neighbors...',
-            success: 'Finished motivating neighbors.',
-            error: 'Error while motivating neighbors.'
-        })
+            pending: 'Motivating clan members...',
+            success: 'Finished motivating clan members.',
+            error: 'Error while motivating clan members.'
+        });
     }
     async CollectTavern(){
-        FoEconsole.log("Collecting tavern");
         const tavernSeats = await FoEPlayers.getTavernSeats();
         if(tavernSeats["unlockedChairs"] !== tavernSeats["occupiedSeats"]) {
             FoEconsole.log("Tavern is not fully occupied yet");
-            toast('Tavern is not fully occupied yet',{autoClose: 2000});
             return;
         }
+        FoEconsole.log("Collecting tavern");
         const request = requestJSON("FriendsTavernService","collectReward");
-
         await toast.promise(FoERequest.FetchRequestAsync(request),
         {
             pending: 'Collecting tavern...',
@@ -65,24 +87,36 @@ class FoePlayerUtils extends EventEmitter{
 
         FoEconsole.log("Tavern collected");
     }
+    async seatToPlayerTavern(playerid){
+        FoEconsole.log(`Sitting down at ${playerid}`);      
+        const sitRequest = requestJSON("FriendsTavernService","getOtherTavern",[playerid]);
+        await FoERequest.FetchRequestAsync(sitRequest,{delay:100});     
+    }
     async seatToTavern(playerid){
         const getTavernrequest = requestJSON("FriendsTavernService","getOtherTavernState",[playerid]);
-        const tavernsData = await FoERequest.FetchRequestAsync(getTavernrequest,100);
-        if(tavernsData.unlockedChairCount != tavernsData.sittingPlayerCount && 
-            ["notFriend", "noChair", "isSitting", "noChair", "alreadyVisited"].indexOf(tavernsData["state"]) === -1 ){  
-                FoEconsole.log(`Sitting down at ${tavernsData.ownerId}`);      
-                const sitRequest = requestJSON("FriendsTavernService","getOtherTavern",[playerid]);
-                await FoERequest.FetchRequestAsync(sitRequest,100);                               
+        const tavernData = await FoERequest.FetchRequestAsync(getTavernrequest, {delay:100});
+        if(tavernData.unlockedChairCount != tavernData.sittingPlayerCount && 
+            ["notFriend", "newFriend", "noChair", "isSitting", "noChair", "alreadyVisited"].indexOf(tavernData["state"]) === -1 ) 
+                this.seatToPlayerTavern(playerid);
+    }
+    async seatToTaverns(taverns){
+        let request = [];
+        for (const tavern of taverns){
+            if(tavern.unlockedChairCount != tavern.sittingPlayerCount && 
+                ["notFriend", "newFriend", "noChair", "isSitting", "noChair", "alreadyVisited"].indexOf(tavern["state"]) === -1 )
+                    request.push(requestJSON("FriendsTavernService","getOtherTavern",[tavern.ownerId],true));
         }
+        if(!request || request.length === 0) return;
+        await FoERequest.FetchRequestAsync(request);
     }
     async seatToAllTaverns(){
         FoEconsole.log(`Started seating to taverns.`);
-        await toast.promise(
-            new Promise(async (resolve,reject)=>{
+        await toast.promise(async ()=>{
                 const friendsList = await FoEPlayers.getFriendsList();
-                for(const player of friendsList) await this.seatToTavern(player.player_id)
-                resolve()
-            }),
+                const request = friendsList.map(player=> requestJSON("FriendsTavernService","getOtherTavernState",[player.player_id],true));
+                const response = await FoERequest.FetchRequestAsync(request); 
+                await this.seatToTaverns(response);
+            },
         {
             pending: 'Seating to taverns...',
             success: 'Finished seating to taverns.',
@@ -94,18 +128,15 @@ class FoePlayerUtils extends EventEmitter{
         const request = requestJSON("FriendService","deleteFriend",[player.player_id]);
         await FoERequest.FetchRequestAsync(request);
         FoEconsole.log(`Removed inactive player ${player.name}`);
+        toast.success(`Removed inactive player ${player.name}`);
     }
     async removeInactivePlayers(){   
         FoEconsole.log(`Started removing inactive players`);
-        await toast.promise(
-            new Promise(async (resolve,reject)=>{
+        await toast.promise(async ()=>{
                 let playerList = await FoEPlayers.getFriendsList();
-                for(const player of playerList){
-                    if (player.is_active === false) 
-                        await this.removePlayer(player)
-                }
-                resolve();
-            }),
+                for(const player of playerList)
+                    if (player.is_active === false) await this.removePlayer(player)
+            },
             {
             pending: 'Removing inactive friends...',
             success: 'Finished removing friends.',

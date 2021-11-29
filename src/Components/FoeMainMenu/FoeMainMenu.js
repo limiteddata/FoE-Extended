@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { urlResolver } from '../../FoeHelper/URLResolver'
 import '../../styles/App.scss'
 import MainMenu from '../../Components/MainMenu/MainMenu';
@@ -11,6 +11,7 @@ import GBWindow from '../Windows/GBWindow/GBWindow';
 import AttackWindow from '../Windows/AttackWindow/AttackWindow';
 import OptionsWindow from '../Windows/OptionsWindow/OptionsWindow';
 import ProductionWindow from '../Windows/ProductionWindow/ProductionWindow';
+import { FoEProxy } from '../../FoeHelper/FoeProxy';
 
 
 const armyicon = urlResolver.resolve('/src/assets/img/icon_armyManagement.png')
@@ -24,6 +25,11 @@ const production = urlResolver.resolve('/src/assets/img/production.png')
 
 
 export default function FoeMainMenu() {
+    useEffect(() => {
+        const gameUrl = globalThis.location.href; 
+        FoEProxy.addHandler("Error",()=> globalThis.window.location.href = gameUrl);
+        FoEProxy.addHandler("Redirect",()=> globalThis.window.location.href = gameUrl);
+    }, [])
     return (
         <MainMenu>           
             <MenuItem

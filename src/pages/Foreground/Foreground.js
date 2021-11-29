@@ -12,7 +12,6 @@ function Foreground() {
         <>
             <FoeMainMenu/>
             <ToastContainer
-                limit={7}
                 theme="dark"
                 position="top-right"
                 autoClose={5000}

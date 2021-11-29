@@ -2,6 +2,11 @@
 
 # FoE Extended
 
+# [Install on Google Chrome](https://chrome.google.com/webstore/detail/foe-extended/gcddiojppfdmckoeobpbbbndpinhbjnc)
+
+<img src="screenshots/ss1.png" width="600"/>
+<img src="screenshots/ss2.png" width="600"/>
+<img src="screenshots/ss3.png" width="600"/>
 
 - **_This is the new version of the now depricated [FOE Helper Bot](https://github.com/limiteddata/FOE-Helper-Bot)!_**
 - This bot was created to bring a more user friendly UI with all the functionality and more from the old helper.
@@ -20,11 +25,6 @@ This is a Forge of Empires Chrome Extension to help improve your experience by g
 - And more.
 
 Please open up an issue to inform me of any bug you find.
-
-## Installing and Running
-
-**Google Chrome Extention** can be found here: [link](https://)
-
 
 ### For developers:
 

@@ -56,11 +56,13 @@ class FoeGVG extends EventEmitter{
         
     }
     async getGVGOverview(era){
+        if(!FoEPlayers.currentPlayer.clan_name || FoEPlayers.currentPlayer.clan_name === '') throw 'Player is not in a guild.'
         const request = requestJSON('ClanBattleService','getProvinceDetailed', [era]);
         const response = await FoERequest.FetchRequestAsync(request, {delay:0});
         return response;
     }
     async getSectorOverview(sectorId){
+        if(!FoEPlayers.currentPlayer.clan_name || FoEPlayers.currentPlayer.clan_name === '') throw 'Player is not in a guild.'
         const request = requestJSON('ClanBattleService','getProvinceSectorDetailed', [sectorId]);
         const response = await FoERequest.FetchRequestAsync(request, {delay:100});
         return response;
@@ -106,57 +108,111 @@ class FoeGVG extends EventEmitter{
     }
 
     async attackEra(era){
-        const sectors = await this.getAttackingSectors(era);
-        if (sectors.length==0) return;
-        for (const sectorId of sectors){
-            FoEconsole.log(`GVG attacking sector id: ${sectorId} from era ${era}`);
-            const clanId = (await this.getSectorOverview(sectorId)).siege_clan_id;
-            const armyIndex = 0;
-            for (let i = 0; i < 80; i++) {
-                if(armyIndex > armyManagement.attackArmy.length-1) {
-                    FoEconsole.log('Too many failed attack attempts');
-                    return;
-                }
-                const sectorOverview =  await this.getSectorOverview(sectorId);     
-                if(sectorOverview.owner_id === clanId) break;
-                FoEconsole.log(`Hitpoints left: ${sectorOverview.hitpoints}`);
-                await armyManagement.setNewGVGArmy(era,armyIndex);
-                const attackResult = await FoEAttack.gvgAttack(sectorId);
-                if(attackResult === -1) armyIndex = 0;
-                else {
-                    armyIndex++;
-                    FoEconsole.log('Switching army type')
+        await toast.promise(
+            new Promise(async (resolve,reject)=>{
+                try {
+
+                    const sectors = await this.getAttackingSectors(era);
+                    if (sectors.length==0){
+                        resolve('No sectors to attack');
+                        return;
+                    } 
+                    for (const sectorId of sectors){
+                        FoEconsole.log(`GVG attacking sector id: ${sectorId} from era ${era}`);
+                        const clanId = (await this.getSectorOverview(sectorId)).siege_clan_id;
+                        const armyIndex = 0;
+                        for (let i = 0; i < 80; i++) {
+                            if(armyIndex > armyManagement.attackArmy.length-1) {
+                                FoEconsole.log('Too many failed attack attempts');
+                                resolve('Too many failed attack attempts');
+                                return;
+                            }
+                            const sectorOverview =  await this.getSectorOverview(sectorId);     
+                            if(sectorOverview.owner_id === clanId) break;
+                            FoEconsole.log(`Hitpoints left: ${sectorOverview.hitpoints}`);
+                            await armyManagement.setNewGVGArmy(era,armyIndex);
+                            const attackResult = await FoEAttack.gvgAttack(sectorId);
+                            if(attackResult === -1) armyIndex = 0;
+                            else {
+                                armyIndex++;
+                                FoEconsole.log('Switching army type')
+                            }
+                        }
+                        FoEconsole.log("Done attacking sector"); 
+                    }
+                    FoEconsole.log("Finished attacking gvg");
+                    resolve('Finished attacking gvg');
+                } catch (error) {
+                    reject(error);
+            }}),
+            {
+                pending: 'Attacking GVG...',
+                success: {
+                    render({data}){
+                        return `${data}`;
+                    }
+                },
+                error: {
+                render({data}){
+                    return `${data}`
                 }
             }
-            FoEconsole.log("Done attacking sector"); 
-        }
-        FoEconsole.log("Done attacking gvg");
+        })  
     }
 
     async defendEra(era){
-        const sectors = await this.getSigedSectors(era);
-        if (sectors.length==0) return;
-        for (const sectorId of sectors){
-            FoEconsole.log(`GVG defending sector id: ${sectorId} from era ${era}`);
-            const armyIndex = 0;
-            for (let i = 0; i < 80; i++) {
-                if(armyIndex > armyManagement.attackArmy.length-1) reject('Too many failed attack attempts');
-                const sectorOverview =  await this.getSectorOverview(sectorId);     
-                if(sectorOverview.siege_clan_id) break;
-                for (let p = 0; p < sectorOverview.siege_armies.length; p++) {
-                    FoEconsole.log(`Hitpoints left: ${sectorOverview.siege_armies[p].hitpoints}`);
-                }
-                await armyManagement.setNewGVGArmy(era,armyIndex);
-                const attackResult = await FoEAttack.gvgAttack(sectorId, true);
-                if(attackResult === -1) armyIndex = 0;
-                else {
-                    armyIndex++;
-                    FoEconsole.log('Switching army type')
+        await toast.promise(
+            new Promise(async (resolve,reject)=>{
+                try {
+                    const sectors = await this.getSigedSectors(era);
+                    if (sectors.length==0){
+                        resolve('No sectors to defend');
+                        return;
+                    } 
+                    for (const sectorId of sectors){
+                        FoEconsole.log(`GVG defending sector id: ${sectorId} from era ${era}`);
+                        const armyIndex = 0;
+                        for (let i = 0; i < 80; i++) {
+                            if(armyIndex > armyManagement.attackArmy.length-1){
+                                FoEconsole.log('Too many failed attack attempts');
+                                reject('Too many failed attack attempts');
+                                return;
+                            } 
+                            const sectorOverview =  await this.getSectorOverview(sectorId);     
+                            if(sectorOverview.siege_clan_id) break;
+                            for (let p = 0; p < sectorOverview.siege_armies.length; p++) {
+                                FoEconsole.log(`Hitpoints left: ${sectorOverview.siege_armies[p].hitpoints}`);
+                            }
+                            await armyManagement.setNewGVGArmy(era,armyIndex);
+                            const attackResult = await FoEAttack.gvgAttack(sectorId, true);
+                            if(attackResult === -1) armyIndex = 0;
+                            else {
+                                armyIndex++;
+                                FoEconsole.log('Switching army type')
+                            }
+                        }
+                        FoEconsole.log("Done defending sector"); 
+                    }
+
+                    FoEconsole.log("Finished deffending gvg");
+                    resolve('Finished deffending gvg');
+                } 
+                catch (error) {
+                    reject(error);
+            }}),
+            {
+                pending: 'Defending GVG...',
+                success: {
+                    render({data}){
+                        return `${data}`;
+                    }
+                },
+                error: {
+                render({data}){
+                    return `${data}`
                 }
             }
-            FoEconsole.log("Done defending sector"); 
-        }
-        FoEconsole.log("Done deffending gvg");
+        })  
     }
     getGVGEras(){
         return armyManagement.gvgArmy.reduce((a,b)=>{

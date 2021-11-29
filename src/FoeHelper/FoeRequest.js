@@ -1,7 +1,8 @@
 import md5 from 'md5';
 import { wait, getResponseMethod } from './Utils';
+import ResponseHandler from './ResponseHandler';
 
-class FoeRequest{
+class FoeRequest extends ResponseHandler{
     gameOptions = {
         secret: null,
         version: null,
@@ -10,7 +11,24 @@ class FoeRequest{
         requestId:0,
     };
     _this;
+
+    #requestsDelay = 800;
+    get requestsDelay(){
+        return this.#requestsDelay;
+    }
+    set requestsDelay(e){
+        if(this.#requestsDelay === e) return;
+        this.#requestsDelay = e;
+        localStorage.setItem('requestsDelay', JSON.stringify(e));
+    }
+
     constructor(){
+        super();
+
+        const loadedrequestsDelay = localStorage.getItem('requestsDelay');
+        if(loadedrequestsDelay && loadedrequestsDelay != 'null')
+        this.requestsDelay = JSON.parse(loadedrequestsDelay); 
+
         let scripts = document.getElementsByTagName('script');
         fetch(scripts[scripts.length-1].src).then(resp=>resp.text()).then(responseText=>{
             this.gameOptions.secret = responseText.split("VERSION_SECRET=\"")[1].split("\";")[0];
@@ -24,19 +42,23 @@ class FoeRequest{
         return md5(data).toString(16).slice(0, 10);
     }
 
-    FetchRequestAsync = async (request, {delay=600, raw=false}={})=>{
+    FetchRequestAsync = async (request, {delay=this.requestsDelay, raw=false}={})=>{
         if(!this.isReady){
-            await wait(1000);
+            await wait(1500);
             if(!this.isReady) throw 'Extension is not ready!';
         }
         if(delay !== 0) await wait(delay);
-        request.forEach(element => element["requestId"] = this.gameOptions.requestId++  ); 
+        request["requestId"] = this.gameOptions.requestId++;
         return new Promise( (res, rej) => {
             const channel = new MessageChannel(); 
             channel.port1.onmessage = ({data}) => {
               channel.port1.close();
               if (data.error) rej(data.error);
-              else res( raw ? data.result : getResponseMethod(data.result, request[0]['requestMethod']) );
+              else {
+                    let response = data.result;
+                    for (let i = 0; i < response.length; i++) this.handleCallbacks(response[i].requestClass, response[i].requestMethod,response[i].responseData);
+                    res( raw ? response : getResponseMethod(response, request[0]['requestMethod']) );
+              }
             };
             window.postMessage({
                 type:"PageFetch", 

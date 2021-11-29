@@ -3,6 +3,7 @@ import { requestJSON } from "../Utils";
 import { FoEProxy } from "../FoeProxy";
 import { FoEconsole } from "../Foeconsole/Foeconsole";
 import { toast } from "react-toastify";
+import { FoEPlayers } from "../FoEPlayers/FoEPlayers";
 const EventEmitter = require("events");
 
 class FoeCity extends EventEmitter{ 
@@ -46,21 +47,22 @@ class FoeCity extends EventEmitter{
         this.#autoCollect = e;
         localStorage.setItem('autoCollect', JSON.stringify(e));
         if(e) {
-            this.collectAndSetBuildings();
-            this.#autoInterval = setInterval(()=>{
-                if(!this.entities) return;
-                const nowTimestamp = Math.floor(Date.now() / 1000);
-                let updatedEntities = 0;
-                for (let i = 0; i < this.entities.length; i++) {
-                    if( this.entities[i].state.__class__ === 'ProductionFinishedState' ||
-                        (this.entities[i].state.__class__ === "ProducingState" && 
-                        nowTimestamp >= this.entities[i].state.next_state_transition_at) ) {
-                            this.collectAndSetBuilding(this.entities[i]);
-                            updatedEntities++;
-                        }
-                }
-                if(updatedEntities>0) toast.success(`Collected and set ${updatedEntities} buildings`);
-            },3000)
+            setTimeout(()=>{
+                this.collectAndSetBuildings();
+                this.#autoInterval = setInterval(async ()=>{
+                    if(!this.entities) return;
+                    if(FoEPlayers.playerResources.strategy_points>=100) return;
+                    const nowTimestamp = Math.floor(Date.now() / 1000);
+                    let updatedEntities = 0;
+                    for (let i = 0; i < this.entities.length; i++) {
+                        if( this.entities[i].state.__class__ === 'ProductionFinishedState' ||
+                            (this.entities[i].state.__class__ === "ProducingState" && 
+                            nowTimestamp >= this.entities[i].state.next_state_transition_at) ) 
+                             updatedEntities += await this.collectAndSetBuilding(this.entities[i]);
+                    }
+                    if(updatedEntities>0) toast.success(`Collected and set ${updatedEntities} buildings`);
+                },3000)
+            },2000)
         }
         else clearInterval(this.#autoInterval);
     }
@@ -108,8 +110,9 @@ class FoeCity extends EventEmitter{
         return this.entities;
     }
     async collectAndSetBuilding(building){
-        await this.collectBuilding(building);
-        await this.setProductionBuilding(building);
+        const collectedBuildings = await this.collectBuilding(building);
+        if(collectedBuildings>0) await this.setProductionBuilding(building);
+        return collectedBuildings;
     }
     async cancelProduction(){
         FoEconsole.log("Starting to cancel all the production buildings except of the priority list");
@@ -133,13 +136,23 @@ class FoeCity extends EventEmitter{
             (building.state.__class__ === "ProducingState" && nowTimestamp >= building.state.next_state_transition_at));
     }
     async collectBuilding(building){
+        if(FoEPlayers.playerResources.strategy_points>=100) {
+            FoEconsole.log(`Player has over 100 SP`);
+            toast.error(`Player has over 100 SP`);
+            throw 'Player has over 100 SP';
+        }
         const request = requestJSON('CityProductionService', 'pickupProduction', [[building.id]]);
         const response = await FoERequest.FetchRequestAsync(request,{delay:0});  
         FoEconsole.log(`Building ${building.cityentity_id} collected`);
         this.updateEntities(response.updatedEntities);
+        return response.updatedEntities.length;
     }
 
     async collectAllBuildings(){
+        if(FoEPlayers.playerResources.strategy_points>=100) {
+            FoEconsole.log(`Player has over 100 SP`);
+            throw 'Player has over 100 SP';
+        }
         const buildings = (await this.getColectableBuildings()).map(building=>building.id);
         if(buildings.length === 0) return;
         FoEconsole.log('Collecting all buildings');
@@ -156,10 +169,11 @@ class FoeCity extends EventEmitter{
     }
     async setProductionBuilding(building){
         let prodOption = 1;
-        if(this.manualBuildings[building.id]) prodOption = this.manualBuildings[building.id].option;
+        if(building.type === "production") prodOption = this.defaultProductionOption;
         else if(building.type === "goods") prodOption = this.defaultGoodsOption;
-        else prodOption = this.defaultProductionOption;
-        if(building.type === "goods" && prodOption>4 ) prodOption = 4;
+        else return; // return because building cant be set
+        if(this.manualBuildings[building.id]) prodOption = this.manualBuildings[building.id].option;
+        if(building.type === "goods" && prodOption > 4 ) prodOption = 4;
         const request = requestJSON('CityProductionService','startProduction',[building.id, prodOption]);
         const response = await FoERequest.FetchRequestAsync(request, {delay:200});   
         FoEconsole.log(`Production building ${building.cityentity_id}(${building.id}) is produceing now ${prodOption}`);  
