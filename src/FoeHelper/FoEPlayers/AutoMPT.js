@@ -9,6 +9,7 @@ const EventEmitter = require("events");
 class FoeAutoMPT extends EventEmitter{  
     #autoMotivateNeighbors=false;
     #intervalMNeighbors=null;
+    #proxy;
     get autoMotivateNeighbors(){
         return this.#autoMotivateNeighbors;
     }
@@ -76,8 +77,18 @@ class FoeAutoMPT extends EventEmitter{
         if(e){
             FoEconsole.log(`Auto colect tavern active`)
             FoEPlayerUtils.CollectTavern();
-            FoEPlayerUtils.seatToAllTaverns();   
+            FoEPlayerUtils.seatToAllTaverns(); 
+            this.#proxy = FoEProxy.addHandler('FriendsTavernService', 'getSittingPlayersCount',async (e)=>{
+                if(e[2] !== e[1]) {
+                    if(FoEPlayers.currentPlayer && e[0] === FoEPlayers.currentPlayer.player_id && e[2] === e[1]){
+                        await FoEPlayerUtils.CollectTavern();
+                        return;
+                    }
+                    await FoEPlayerUtils.seatToTavern(e[0]);
+                }
+            });  
         }
+        else FoEProxy.removeHandler(this.#proxy);
     }
     constructor(){
         super();            
@@ -96,15 +107,7 @@ class FoeAutoMPT extends EventEmitter{
         const loadedautoTavern = localStorage.getItem('autoTavern');
         if(loadedautoTavern && loadedautoTavern != 'null')
             this.autoTavern = JSON.parse(loadedautoTavern);
-        FoEProxy.addHandler('FriendsTavernService', 'getSittingPlayersCount',async (e)=>{
-            if(e[2] !== e[1]) {
-                if(FoEPlayers.currentPlayer && e[0] === FoEPlayers.currentPlayer.player_id && e[2] === e[1]){
-                    await FoEPlayerUtils.CollectTavern();
-                    return;
-                }
-                await FoEPlayerUtils.seatToTavern(e[0]);
-            }
-        });
+
     }
 }
 

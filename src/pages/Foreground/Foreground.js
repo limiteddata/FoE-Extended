@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
+import { timer } from '../../FoeHelper/GlobalTimer';
 import { FoEProxy } from '../../FoeHelper/FoeProxy'; 
 import { FoEPlayers } from '../../FoeHelper/FoEPlayers/FoEPlayers';
 import FoeMainMenu from '../../Components/FoeMainMenu/FoeMainMenu';

@@ -133,7 +133,7 @@ class FoeCity extends EventEmitter{
         const buildings = await this.getBuildings();
         const nowTimestamp = Math.floor(Date.now() / 1000);
         return buildings.filter(building=> building.state.__class__ === 'ProductionFinishedState'|| 
-            (building.state.__class__ === "ProducingState" && nowTimestamp >= building.state.next_state_transition_at));
+            ((building.state.__class__ === "ProducingState" || building.state.__class__ === "PlunderedState")&& nowTimestamp >= building.state.next_state_transition_at));
     }
     async collectBuilding(building){
         if(FoEPlayers.playerResources.strategy_points>=100) {
@@ -176,7 +176,7 @@ class FoeCity extends EventEmitter{
         if(building.type === "goods" && prodOption > 4 ) prodOption = 4;
         const request = requestJSON('CityProductionService','startProduction',[building.id, prodOption]);
         const response = await FoERequest.FetchRequestAsync(request, {delay:200});   
-        FoEconsole.log(`Production building ${building.cityentity_id}(${building.id}) is produceing now ${prodOption}`);  
+        FoEconsole.log(`Production building ${building.cityentity_id}(${building.id}) is producing now ${prodOption}`);  
         this.updateEntities(response.updatedEntities);
     }
     async setAllProductionBuildings(){

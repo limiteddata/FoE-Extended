@@ -16,7 +16,7 @@ export default class ResponseHandler{
         return handler;
     }
     removeHandler = (handler)=>{
-        if(!this.handlers[`${handler.requestClass}:${handler.requestMethod}`]) return;
+        if(!handler.requestClass || !handler.requestMethod || !this.handlers[`${handler.requestClass}:${handler.requestMethod}`]) return;
         const newHandlers = this.handlers[`${handler.requestClass}:${handler.requestMethod}`].filter(hd=> hd.id !== handler.id)
         this.handlers[`${handler.requestClass}:${handler.requestMethod}`] = newHandlers;
     } 

@@ -6,8 +6,10 @@ import Dropdown from 'react-dropdown';
 import { FoECity } from '../../../FoeHelper/FoeCity/FoeCity';
 import SavedBuildings from './SavedBuildings';
 import { goodsOptions, productionOptions} from './ProductionOptions';
+import { FoECastel } from '../../../FoeHelper/FoeCity/FoeCastel';
+
 const windowstyle = {
-    width: 590,
+    width: 670,
     height: 450,
 }
 
@@ -22,6 +24,10 @@ export default function ProductionWindow({open,setOpen}) {
                     label={'Auto collect and set'}
                     onChanged={(e)=> FoECity.autoCollect = e}
                     checked={FoECity.autoCollect}/>
+                <Checkbox
+                    label={'Auto collect castel'}
+                    onChanged={(e)=> FoECastel.autoCollectCastel = e}
+                    checked={FoECastel.autoCollectCastel}/>
                 <div className='flexRow'>
                     <p>Default production option</p>
                     <Dropdown 

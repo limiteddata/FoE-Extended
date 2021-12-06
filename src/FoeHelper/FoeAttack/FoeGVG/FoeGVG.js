@@ -13,7 +13,6 @@ const EventEmitter = require("events");
 
 class FoeGVG extends EventEmitter{  
     #autoAttackGVG = false;
-    #proxy = null;
     get autoAttackGVG(){
         return this.#autoAttackGVG;
     }
@@ -23,11 +22,11 @@ class FoeGVG extends EventEmitter{
         localStorage.setItem('autoAttackGVG', JSON.stringify(e));
         if(e){
             this.attackAllGVG();
-            if(this.#proxy === null) this.#proxy = FoEProxy.addHandler('ClanBattleService', 'changeProvince',this.__proxyHandler__);
+            this.#proxy = FoEProxy.addHandler('ClanBattleService', 'changeProvince',this.__proxyHandler__);
         }
         else FoEProxy.removeHandler(this.#proxy);
     }
-
+    #proxy;
     #autoDefendGVG = false;
     get autoDefendGVG(){
         return this.#autoDefendGVG;
@@ -38,7 +37,7 @@ class FoeGVG extends EventEmitter{
         localStorage.setItem('autoDefendGVG', JSON.stringify(e));
         if(e){
             this.defendAllGVG();
-            if(this.#proxy === null) this.#proxy = FoEProxy.addHandler('ClanBattleService', 'changeProvince',this.__proxyHandler__);
+            this.#proxy = FoEProxy.addHandler('ClanBattleService', 'changeProvince',this.__proxyHandler__);
         }
         else FoEProxy.removeHandler(this.#proxy);
     }
