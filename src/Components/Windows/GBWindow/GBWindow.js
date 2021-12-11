@@ -22,7 +22,7 @@ export default function GBWindow({open,setOpen}) {
         return e.map(building=>{
             return  [
                 `#${building.player.rank}`, 
-                new Date().toTimeString().slice(0,8),
+                building.other.timestamp,
                 building.player.name, 
                 <GBuilding name={building.building.city_entity_id}/>,
                 building.building.level,

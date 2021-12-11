@@ -67,11 +67,12 @@ export default function SavedBuildings() {
         setopenWindow(false);
     }
     return (
-        <div className='productionWrapper'>
-            {
-                Object.keys(overridebuildings).map(key=><SavedBuilding building={FoECity.manualBuildings[key]} key={key}/>)
-            }
-
+        <div className='productionContainer'>
+            <div className='productionWrapper'>
+                {
+                    Object.keys(overridebuildings).map(key=><SavedBuilding building={FoECity.manualBuildings[key]} key={key}/>)
+                }
+            </div>
             <div className='addButton addBuilding' onClick={()=>setopenWindow(last=>!last)}></div>
 
             {

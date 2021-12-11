@@ -1,18 +1,27 @@
 @import '../../../styles/properties';
 @import '../../../styles/components';
 
-.productionWrapper {
+.productionContainer {
   @include DarkWoodBackground;
-  display: flex;
-  flex-direction: row;
+
   width: 90%;
   padding: 10px;
-  flex-wrap: wrap;
+
   margin-top: 10px;
-  justify-content: flex-start;
-  overflow-y: auto;
+
   height: 70%;
   position: relative;
+}
+
+.productionWrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
+  overflow-y: auto;
 }
 
 .savedBuildingBody {

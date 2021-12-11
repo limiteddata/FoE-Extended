@@ -67,8 +67,7 @@ class FoeCastel extends EventEmitter{
         toast.success('Castel points collected');
         
         const overview = getResponseMethod(response, "getOverview");
-        this.collectionPointsAt = response.dailyPointsCollectionAvailableAt;
-        console.log( overview );
+        this.collectionPointsAt = overview.dailyPointsCollectionAvailableAt;
     }
     collectReward = async ()=>{
         const request = requestJSON('CastleSystemService','collectDailyReward');
@@ -78,7 +77,6 @@ class FoeCastel extends EventEmitter{
 
         const overview = getResponseMethod(response, "getOverview");
         this.collectionRewardAt = overview.dailyRewardCollectionAvailableAt;
-        console.log( overview );
     }
 }
 

@@ -173,7 +173,8 @@ class FoeGB extends EventEmitter{
                             rankWithArcBonus: rankWithArcBonus,
                             arcBonus: this.arcBonus,
                             rank: rank.rank,
-                            profit: profit
+                            profit: profit,
+                            timestamp: new Date().toTimeString().slice(0,8)
                         }
                     }
                     this.foundBuildings = [...this.foundBuildings, newBld];

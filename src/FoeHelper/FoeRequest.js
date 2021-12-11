@@ -12,7 +12,7 @@ class FoeRequest extends ResponseHandler{
     };
     _this;
 
-    #requestsDelay = 1300;
+    #requestsDelay = 2500;
     get requestsDelay(){
         return this.#requestsDelay;
     }

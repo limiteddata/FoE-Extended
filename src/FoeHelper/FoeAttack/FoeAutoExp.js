@@ -6,6 +6,7 @@ import { FoEPlayers } from '../FoEPlayers/FoEPlayers';
 import { toast } from "react-toastify";
 import { FoEAttack } from "./FoeAttack";
 import { FoEProxy } from "../FoeProxy";
+import { timer } from "../GlobalTimer";
 
 const EventEmitter = require("events");
 
@@ -13,10 +14,10 @@ class FoeAutoExp extends EventEmitter{
     armyIndex=0;
     #autoExpedition=false;
     #checking=false;
+    #interval;
     expeditionStarted = false;
     // seconds
     refillInterval = 3600;
-    timeOffset = 2;
 
     get autoExpedition(){
         return this.#autoExpedition;
@@ -26,7 +27,24 @@ class FoeAutoExp extends EventEmitter{
         this.#autoExpedition = e;
         localStorage.setItem('autoExpedition', JSON.stringify(e));
         this.emit('autoExpeditionChanged', this.autoExpedition);
-        if(e && this.#checking === false) this.checkExpedition();
+        if(e && this.#checking === false) {
+            // add if expedition active check
+            this.getOverview().then((overview)=>{
+                if(overview.state === 'active' && overview.isPlayerParticipating && overview.isGuildParticipating )
+                    this.expeditionStarted = (overview.progress.isMapCompleted !== true && overview.progress.difficulty !== 3);
+                else{
+                    // if expedition is inactive set a timeout until the next change
+                    this.#interval = timer.addHandlerAt('expeditonStarts', overview.nextStateTime,()=>{
+                        expeditionStarted = true;
+                        this.checkExpedition();
+                    });
+                }
+
+                this.checkExpedition();
+            });
+            
+        }
+        else timer.removeHandler(this.#interval);
     }
     #expAttempt=0;
     get expAttempt(){
@@ -39,41 +57,28 @@ class FoeAutoExp extends EventEmitter{
     }
     constructor(){
         super();
-        // add if expedition active check
-        this.getOverview(0).then((overview)=>{
-            if(overview.state === 'active' && overview.isPlayerParticipating && overview.isGuildParticipating )
-                this.expeditionStarted = (overview.progress.isMapCompleted !== true && overview.progress.difficulty !== 3);
-            else{
-                // if expedition is inactive set a timeout until the next change
-                const nextExpeditionAt = ((overview.nextStateTime + this.timeOffset) * 1000) - Date.now();
-                setTimeout(()=>{
-                    expeditionStarted = true;
-                    this.checkExpedition();
-                },nextExpeditionAt);
-            }
-            const loadedautoExpedition = localStorage.getItem('autoExpedition');
-            if(loadedautoExpedition && loadedautoExpedition != 'null')
-            this.autoExpedition = JSON.parse(loadedautoExpedition); 
-        });
+        const loadedautoExpedition = localStorage.getItem('autoExpedition');
+        if(loadedautoExpedition && loadedautoExpedition != 'null')
+        this.autoExpedition = JSON.parse(loadedautoExpedition); 
         // increment expedition attempts
         FoEProxy.addHandler('ResourceService', 'getPlayerAutoRefills',(e)=>{
-            const nextRefillAt = ((e.resources.guild_expedition_attempt + this.refillInterval + this.timeOffset) * 1000) - Date.now();
-            setTimeout(()=>{
+            const nextRefillAt = e.resources.guild_expedition_attempt + this.refillInterval;
+            timer.addHandlerAt('guild_expedition_attempt',nextRefillAt,()=>{
                 this.expAttempt++;
                 setInterval(()=>{
                     this.expAttempt++
-                }, (this.refillInterval+this.timeOffset) * 1000);
-            },nextRefillAt);
+                }, (this.refillInterval+2) * 1000);
+            });
         });
         FoEPlayers.on('playerResources',(e)=>this.expAttempt = e.guild_expedition_attempt);
     }
     async checkExpedition(){
         if(this.#checking===true || this.expeditionStarted === false) return;
         this.#checking = true;
-        await wait(this.timeOffset * 1000);
         await toast.promise(
             new Promise(async (resolve,reject)=>{
                 try {
+                    await wait(2000);
                     FoEconsole.log("Starting to solve expedition");   
                     if(this.expAttempt === 0){  
                         FoEconsole.log('Not enough attempts');
@@ -150,11 +155,11 @@ class FoeAutoExp extends EventEmitter{
         })  
         this.#checking = false; 
     }
-    async getOverview(delay = 400){
+    async getOverview(){
         const request = requestJSON("GuildExpeditionService","getOverview")  
-        const response = await FoERequest.FetchRequestAsync(request, {delay:delay});
-        if(response.state === 'active' && !response.progress.hasOwnProperty('currentEntityId')) response.progress['currentEntityId'] = 0;
-        if(response.state === 'active' && !response.progress.hasOwnProperty('difficulty')) response.progress['difficulty'] = 0;
+        const response = await FoERequest.FetchRequestAsync(request);
+        if(response.state === 'active' && response.progress && !response.progress.hasOwnProperty('currentEntityId')) response.progress['currentEntityId'] = 0;
+        if(response.state === 'active' && response.progress && !response.progress.hasOwnProperty('difficulty')) response.progress['difficulty'] = 0;
         return response;
     }
     async changetoNextMap(nextmap){

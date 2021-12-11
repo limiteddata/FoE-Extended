@@ -1,7 +1,7 @@
 import ResponseHandler from './ResponseHandler';
 
 class FoeProxy extends ResponseHandler{
-    debug = true;
+    debug = false;
     constructor(){  
         super();       
         // proxy response messages

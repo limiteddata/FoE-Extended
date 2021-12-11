@@ -43,33 +43,19 @@ class FoePlayers extends EventEmitter{
         const playersToIgonore = this.ignorePlayers.split(/[ ,]+/);
         const request = requestJSON("OtherPlayerService","getFriendsList");
         const response = await FoERequest.FetchRequestAsync(request);
-        return response.filter(player=>{
-            if(playersToIgonore.indexOf(player.name) === -1 && player.is_self === false){
-                if(player.is_guild_member) return player.is_guild_member === false;
-                return true;
-            }
-            return false; 
-        });         
+        return response.filter(player=> playersToIgonore.indexOf(player.name) === -1 && player.is_self === false && player.accepted && !player.is_guild_member);    
     }
     async getClanMemberList(){
         const playersToIgonore = this.ignorePlayers.split(/[ ,]+/);
         const request = requestJSON("OtherPlayerService","getClanMemberList");
         const response = await FoERequest.FetchRequestAsync(request);
-        return response.filter(player=> 
-            playersToIgonore.indexOf(player.name) === -1 &&
-            player.is_self === false);
+        return response.filter(player=> playersToIgonore.indexOf(player.name) === -1 && player.is_self === false);
     }
     async getNeighborList(){
         const playersToIgonore = this.ignorePlayers.split(/[ ,]+/);
         const request = requestJSON("OtherPlayerService","getNeighborList");
         let response = await FoERequest.FetchRequestAsync(request);
-        return response.filter(player=>{
-            if(playersToIgonore.indexOf(player.name) === -1 && player.is_self === false && player.is_friend === false){
-                if(player.is_guild_member) return player.is_guild_member === false;
-                return true;
-            }
-            return false; 
-        });  
+        return response.filter(player=> playersToIgonore.indexOf(player.name) === -1 && player.is_self === false && player.is_friend === false && !player.is_guild_member);  
     }
     async getTavernSeats(){   
         const request = requestJSON("FriendsTavernService","getOwnTavern");

@@ -9,7 +9,7 @@ import { goodsOptions, productionOptions} from './ProductionOptions';
 import { FoECastel } from '../../../FoeHelper/FoeCity/FoeCastel';
 
 const windowstyle = {
-    width: 670,
+    width: 700,
     height: 450,
 }
 
