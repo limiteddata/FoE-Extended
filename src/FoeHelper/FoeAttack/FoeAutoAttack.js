@@ -25,24 +25,27 @@ class FoeAutoAttack extends EventEmitter{
     }
 
     async attackAllNeighbors(){
-        const neighbors = (await FoEPlayers.getNeighborList()).filter(neighbor=> {
-                if(!neighbor.next_interaction_in && 
-                    neighbor.canSabotage === false) {
-                    if(FoEPlayers.protectedPlayers) return FoEPlayers.protectedPlayers.indexOf(neighbor.player_id) === -1;
-                    return true;
-                }
-                return false; 
-            });
-        if(neighbors.length === 0) {
-            FoEconsole.log('No neighbor available to attack');
-            return;
-        }
-        await toast.promise(async ()=>{
+        await toast.promise(new Promise(async (resolve,reject)=>{
+            const neighbors = (await FoEPlayers.getNeighborList()).filter(neighbor=> {
+                    if(!neighbor.next_interaction_in && 
+                        !neighbor.canSabotage) {
+                        if(FoEPlayers.protectedPlayers) return FoEPlayers.protectedPlayers.indexOf(neighbor.player_id) === -1;
+                        return true;
+                    }
+                    return false; 
+                });
+            if(neighbors.length === 0) {
+                resolve('No neighbor available to attack');
+                FoEconsole.log('No neighbor available to attack');
+                return;
+            }
+
             for (const neighbor of neighbors){
                 await armyManagement.setNewAttackArmy(0);
                 await FoEAttack.pvpAttack(FoEPlayers.currentPlayer,neighbor);
             }
-        },
+            resolve();
+        }),
         {
             pending: 'Attacking neighbors...',
             success: 'Finished attacking neighbors.',
@@ -51,7 +54,7 @@ class FoeAutoAttack extends EventEmitter{
                 return `${data}`
               }
             }
-          })
+        });
     }
 }
 

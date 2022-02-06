@@ -192,7 +192,7 @@ class FoeAutoMPT extends EventEmitter{
         },
         {
             pending: 'Motivating friends...',
-            success: 'Finished motivating friends.',
+            success: `Finished motivating friends.`,
             error: 'Error while motivating friends.'
         });
     }
@@ -278,7 +278,7 @@ class FoeAutoMPT extends EventEmitter{
         await toast.promise(async ()=>{
                 let playerList = await FoEPlayers.getFriendsList();
                 for(const player of playerList)
-                    if (player.is_active === false) await this.removePlayer(player)
+                    if (!player.is_active) await this.removePlayer(player)
             },
             {
             pending: 'Removing inactive friends...',

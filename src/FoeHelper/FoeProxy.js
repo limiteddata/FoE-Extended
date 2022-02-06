@@ -15,9 +15,9 @@ class FoeProxy extends ResponseHandler{
         };
         XHR.send = function() {
             try{
+                // check over this
                 this.addEventListener('load', () => {
-                    if(this._method == 'POST') 
-                        checkResponse(JSON.parse( this.responseText ));
+                    if(this._method == 'POST') checkResponse(JSON.parse( this.responseText ));
                 });
             } catch (e) {
                 console.error(e);

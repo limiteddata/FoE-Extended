@@ -103,7 +103,7 @@ class FoeGB extends EventEmitter{
                 }
             }
         })
-        FoEconsole.log(`Placed ${fp} FP to ${buildingId} from ${playerId}`);
+        FoEconsole.log(`Placed ${fp} FP building id: ${buildingId} to player id: ${playerId}`);
         return response;
     }
 
@@ -143,12 +143,13 @@ class FoeGB extends EventEmitter{
 
     getStealableGBPlaces = async (player)=>{
         try {
+            FoEconsole.log(`Checking player ${player.name}`);
             const openedBuildings = await this.getOpenedGB(player.player_id);
             const buildingsWithRanks = await this.getGBuildingsRanks(openedBuildings, player.player_id);
             for(const bldWithRanks of buildingsWithRanks){
                 const FPLeft = bldWithRanks.building.max_progress - bldWithRanks.building.current_progress;
                 for(const rank of bldWithRanks.rankings){
-                    if(rank.player.is_self === true)  break;
+                    if(rank.player.is_self)  break;
                     if(rank.player.player_id === player.player_id)  continue;
                     if(!rank.reward) continue;
                     if(!rank.reward.strategy_point_amount) continue;

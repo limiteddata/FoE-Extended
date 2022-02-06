@@ -108,7 +108,7 @@ class FoePlunder extends EventEmitter{
             if(entitie.connected === 1 &&
             ["greatbuilding","decoration","culture","street","random_production"].indexOf(entitie.type) === -1&&
             hasDeepValue(entitie, "state.current_product.product.resources.strategy_points")&&
-            entitie.state.is_motivated === false&&
+            !entitie.state.is_motivated&&
             entitie.state.__class__ === "ProductionFinishedState"&&
             this.__isPlunderable(entitie.cityentity_id)&&
             entitie.state.current_product.product.resources.strategy_points >= this.plunderMinAmount){
@@ -142,7 +142,7 @@ class FoePlunder extends EventEmitter{
     }
     checkPlunder = async ()=>{
         await toast.promise(new Promise(async resp=>{
-            await FoEAutoAttack.attackAllNeighbors();
+            if(this.attackbefore) await FoEAutoAttack.attackAllNeighbors();
             FoEconsole.log(`Checking buildings to sabotage...`);
             this.plunderableBuildings=[];
             const neighbors = (await FoEPlayers.getNeighborList()).filter(neighbor=>neighbor.canSabotage === true);

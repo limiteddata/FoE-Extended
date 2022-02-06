@@ -73,7 +73,7 @@ class FoeAutoExp extends EventEmitter{
         FoEPlayers.on('playerResources',(e)=>this.expAttempt = e.guild_expedition_attempt);
     }
     async checkExpedition(){
-        if(this.#checking===true || this.expeditionStarted === false) return;
+        if(this.#checking===true || !this.expeditionStarted) return;
         this.#checking = true;
         await toast.promise(
             new Promise(async (resolve,reject)=>{

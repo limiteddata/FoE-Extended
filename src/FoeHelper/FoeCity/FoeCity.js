@@ -40,7 +40,7 @@ class FoeCity extends EventEmitter{
         localStorage.setItem('defaultProductionOption', JSON.stringify(e));
     }
     #autoCollect=false;
-    #finishedCollecting=false;
+    _finishedCollecting=false;
     get autoCollect(){
         return this.#autoCollect;
     }
@@ -52,7 +52,7 @@ class FoeCity extends EventEmitter{
             this.#timer.start();
             setTimeout(async ()=>{
                 await this.collectAndSetBuildings();
-                this.#finishedCollecting=true;
+                this._finishedCollecting=true;
                 this.updateEntities(this.entities);
             },2000)
         }
@@ -74,9 +74,8 @@ class FoeCity extends EventEmitter{
         FoEProxy.addHandler('CityProductionService', 'completeProduction', e => this.updateEntities([e]));
         FoEProxy.addHandler('CityMapService', 'placeBuilding', e => this.entities.push(e) );
         FoEProxy.addHandler('CityMapService', 'updateEntity', e => {
-            const updatedBuildings = e.filter(building=> building.player_id === FoEPlayers.currentPlayer.player_id&&
-                building.type !== "greatbuilding");
-            if(updatedBuildings.length > 0) this.updateEntities(e.updatedEntities) 
+            const updatedBuildings = e.filter(building=> building.player_id === FoEPlayers.currentPlayer.player_id);
+            if(updatedBuildings.length > 0) this.updateEntities(updatedBuildings)                 
         });
 
         const loadedGoodsOption = localStorage.getItem('defaultGoodsOption');
@@ -92,7 +91,7 @@ class FoeCity extends EventEmitter{
             this.autoCollect = JSON.parse(loadedautoCollect);
 
     }
-    updateEntities(entities){
+    updateEntities = (entities)=>{
         for (const entitie of entities) {
             if(entitie.player_id !== FoEPlayers.currentPlayer.player_id) continue;
             for (let i = 0; i < this.entities.length; i++) {
@@ -102,8 +101,11 @@ class FoeCity extends EventEmitter{
                 }
             }            
         }
-        if(this.autoCollect && this.#finishedCollecting){
+        if(this.autoCollect && this._finishedCollecting){
             for (const building of this.entities){
+                // check if building is dom and check guild
+                if(building.cityentity_id === "X_FutureEra_Landmark1" && building.bonus.amount === -1) continue;
+                
                 if(building.state.__class__ === "ProducingState" && building.state.next_state_transition_at){      
                     this.#timer.addHandlerAt(building.cityentity_id+building.id, building.state.next_state_transition_at, async ()=>{
                         await this.collectAndSetBuilding(building);
@@ -145,17 +147,32 @@ class FoeCity extends EventEmitter{
     async getColectableBuildings(){
         const buildings = await this.getBuildings();
         const nowTimestamp = Math.floor(Date.now() / 1000);
-        return buildings.filter(building=> 
-            building.state.__class__ === 'ProductionFinishedState'|| 
-            building.state.__class__ === "PlunderedState" || 
-            (building.state.__class__ === "ProducingState" && nowTimestamp >= building.state.next_state_transition_at));
+        return buildings.filter(building=> {
+            // check if building is dom and check guild
+            if(building.cityentity_id === "X_FutureEra_Landmark1" && building.bonus.amount === -1) return false;
+            return building.state.__class__ === 'ProductionFinishedState'|| 
+                building.state.__class__ === "PlunderedState" || 
+                (building.state.__class__ === "ProducingState" && nowTimestamp >= building.state.next_state_transition_at)
+        });
     }
+
+    collectPlunderedBuilding = async (building_id)=>{
+        const request = requestJSON('CityProductionService', 'removePlunderedProduction', [building_id]);
+        const response = await FoERequest.FetchRequestAsync(request);  
+        toast.success(`Removed plunder on building`);
+        FoEconsole.log(`Removed plunder on building`);
+        this.updateEntities(response.updatedEntities);
+        return response.updatedEntities.length;
+    }
+
     async collectBuilding(building){
         if(FoEPlayers.playerResources.strategy_points>=100) {
             FoEconsole.log(`Player has over 100 SP`);
             toast.error(`Player has over 100 SP`);
             throw 'Player has over 100 SP';
         }
+        if(building.state.__class__ === "PlunderedState")
+            return await this.collectPlunderedBuilding(building.id);
         const request = requestJSON('CityProductionService', 'pickupProduction', [[building.id]]);
         const response = await FoERequest.FetchRequestAsync(request);  
         FoEconsole.log(`Building ${building.cityentity_id} collected`);
@@ -168,7 +185,14 @@ class FoeCity extends EventEmitter{
             FoEconsole.log(`Player has over 100 SP`);
             throw 'Player has over 100 SP';
         }
-        const buildings = (await this.getColectableBuildings()).map(building=>building.id);
+        let buildings = await this.getColectableBuildings();
+        // first remove all plundered buildings
+        for (let i = 0; i < buildings.length; i++) {
+            if(buildings[i].state.__class__ !== "PlunderedState") continue;
+            await this.collectPlunderedBuilding(buildings[i].id);
+            buildings.splice(i,1);
+        }
+        buildings = buildings.map(building=>building.id);
         if(buildings.length === 0) return;
         FoEconsole.log('Collecting all buildings');
         const request = requestJSON('CityProductionService', 'pickupProduction', [buildings]);
